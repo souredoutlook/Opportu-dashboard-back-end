@@ -1,9 +1,3 @@
-require("dotenv").config();
-
-const {
-  PORT,
-} = process.env;
-
 const db = require("./db/helpers/index");
 
 const express = require('express');
@@ -21,6 +15,4 @@ app.use(express.urlencoded({ extended: false }));
 app.use('/', indexRouter());
 app.use('/users', usersRouter(db));
 
-app.listen(PORT, () => {
-    console.log(`Listening on port ${PORT}`);
-  });
+module.exports = app;
