@@ -1,10 +1,28 @@
 // test/index.js
 
 const request = require('supertest');
+const session = require('supertest-session');
 const app = require('../bin/server');
 const assert = require('assert');
 
+const testSession = session(app);
+
 describe('All routes', function() {
+  
+  let authenticatedSession;
+
+  //setup authenticated session 
+  before(function(done) {
+    testSession.post('/sessions/new')
+      .send({"email": "nicholas@meisen.haus", "password": "password"})
+      .expect(200)
+      .end(function (err) {
+        if (err) return done(err);
+        authenticatedSession = testSession;
+        return done();
+      });
+  });
+
   after((done) => {
     app.close(done);
   });
@@ -63,6 +81,15 @@ describe('All routes', function() {
         .post('/sessions/new')
         .send({"email": "nicholas@meisen.haus", "password": "password"})
         .expect(200, done);
+    });
+
+  });
+
+  describe('DELETE /session', function() {
+
+    it('responds 401 if session is null', function(done) {
+      testSession.delete('/session')
+        .expect(401, done);
     });
 
   });
