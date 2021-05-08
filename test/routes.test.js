@@ -25,11 +25,11 @@ describe('All routes', function() {
   });
   
   
-  describe('GET /users/', function() {
+  describe('GET /users', function() {
     
     it('responds with an array with a length of 1 or greater', function(done) {
       request(app)
-      .get('/users/')
+      .get('/users')
       .expect(200)
       .then(response => {
         assert(response.body instanceof Array);
@@ -41,31 +41,31 @@ describe('All routes', function() {
     
   });
   
-  describe('GET /sessions/new', function() {
+  describe('GET /session', function() {
     
     it('responds 400 when request is without credentials', function(done) {
       request(app)
-      .post('/sessions/new')
+      .post('/session')
       .expect(400, done);
     });
     
     it('responds 401 if credentials if email is invalid', function(done) {
       request(app)
-      .post('/sessions/new')
+      .post('/session')
       .send({"email": "not@valid.email", "password": "potato"})
       .expect(401, done);
     });
     
     it('responds 401 if password is invalid', function(done) {
       request(app)
-      .post('/sessions/new')
+      .post('/session')
       .send({"email": "nicholas@meisen.haus", "password": "potato"})
       .expect(401, done);
     });
     
     it('responds 200 if credentials are valid', function(done) {
       request(app)
-      .post('/sessions/new')
+      .post('/session')
       .send({"email": "nicholas@meisen.haus", "password": "password"})
       .expect(200, done);
     });
@@ -76,7 +76,7 @@ describe('All routes', function() {
     
     //setup authenticated session 
     before(function(done) {
-      testSession.post('/sessions/new')
+      testSession.post('/session')
         .send({"email": "nicholas@meisen.haus", "password": "password"})
         .expect(200)
         .end(function (err) {
@@ -84,15 +84,15 @@ describe('All routes', function() {
           return done();
         });
     });
-    
+
     it('responds 401 if session.userId is undefined', function(done) {
       request(app)
-      .delete('/sessions/')
+      .delete('/session')
       .expect(401, done);
     });
     
     it('responds 200 if session.userId is not undefined', function(done) {
-      testSession.delete('/sessions/')
+      testSession.delete('/session')
       .expect(200, done);
     })
 

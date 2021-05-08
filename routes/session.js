@@ -4,7 +4,7 @@ const router = express.Router();
 
 module.exports = (db, bcrypt) => {
 
-  router.post('/new', (req, res) => {
+  router.post('/', (req, res) => {
     const {email, password} = req.body;
     
     if (email && password) {

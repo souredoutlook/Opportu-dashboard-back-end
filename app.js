@@ -16,7 +16,7 @@ const cookieSession = require('cookie-session');
 
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
-const sessionsRouter = require('./routes/sessions');
+const sessionRouter = require('./routes/session');
 
 const app = express();
 
@@ -34,6 +34,6 @@ app.use(express.urlencoded({ extended: false }));
 
 app.use('/', indexRouter());
 app.use('/users', usersRouter(db));
-app.use('/sessions', sessionsRouter(db, bcrypt));
+app.use('/session', sessionRouter(db, bcrypt));
 
 module.exports = app;
