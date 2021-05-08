@@ -2,6 +2,7 @@ const db = require("./db/helpers/index");
 
 const express = require('express');
 const logger = require('morgan');
+const bcrypt = require('bcrypt');
 
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
@@ -15,6 +16,6 @@ app.use(express.urlencoded({ extended: false }));
 
 app.use('/', indexRouter());
 app.use('/users', usersRouter(db));
-app.use('/sessions', sessionsRouter(db));
+app.use('/sessions', sessionsRouter(db, bcrypt));
 
 module.exports = app;

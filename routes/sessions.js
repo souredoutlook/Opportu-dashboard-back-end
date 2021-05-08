@@ -1,15 +1,21 @@
-const e = require('express');
 const express = require('express');
 const router = express.Router();
 
 
-module.exports = () => {
+module.exports = (db, bcrypt) => {
 
   router.post('/new', (req, res) => {
     const {email, password} = req.body;
     
     if (email && password) {
-      res.sendStatus(200);
+      db.validateUser(email, password, bcrypt)
+      .then((isValid)=>{
+        if (isValid) {
+          res.sendStatus(200);
+        } else {
+          res.sendStatus(401)
+        }
+      })
     } else {
       res.sendStatus(400);
     }

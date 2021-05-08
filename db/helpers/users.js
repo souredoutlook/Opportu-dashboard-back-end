@@ -1,7 +1,7 @@
 const db = require("../pool")
 
 /**
- * A function that returns user details for all users
+ * Returns user details for all users
  * @returns array of objects representing user details
  */
 const getUsers = function() {
@@ -20,4 +20,29 @@ const getUsers = function() {
     })
 };
 
-module.exports = { getUsers }
+/**
+ * Returns user with matching email
+ * @param {string} email 
+ * @returns an object representing user with email that equals given argument
+ */
+const getUserByEmail = function(email) {
+  const queryParams = [email];
+  const queryString = `
+  SELECT *
+  FROM users
+  WHERE email = $1;
+  `;
+
+  return db.query(queryString, queryParams)
+  .then((res) => {
+    if (res.rows.length > 0) {
+      //validations should ensure that only one result is possible
+      return res.rows[0];
+    } else {
+      //return null when no user is found
+      return null;
+    }
+  })
+ }
+
+module.exports = { getUsers, getUserByEmail }

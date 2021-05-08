@@ -38,10 +38,31 @@ describe('All routes', function() {
 
   describe('GET /sessions/new', function() {
 
-    it('fails without credentials', function(done) {
+    it('responds 400 when request is without credentials', function(done) {
       request(app)
         .post('/sessions/new')
         .expect(400, done);
+    });
+
+    it('responds 401 if credentials if email is invalid', function(done) {
+      request(app)
+        .post('/sessions/new')
+        .send({"email": "not@valid.email", "password": "potato"})
+        .expect(401, done);
+    });
+
+    it('responds 401 if password is invalid', function(done) {
+      request(app)
+        .post('/sessions/new')
+        .send({"email": "nicholas@meisen.haus", "password": "potato"})
+        .expect(401, done);
+    });
+
+    it('responds 200 if credentials are valid', function(done) {
+      request(app)
+        .post('/sessions/new')
+        .send({"email": "nicholas@meisen.haus", "password": "password"})
+        .expect(200, done);
     });
 
   });
