@@ -22,6 +22,14 @@ module.exports = (db, bcrypt) => {
     }
   });
 
+  router.delete('/', (req, res) => {
+    if (req.session.userId) {
+      res.sendStatus(200);
+    } else {
+      res.sendStatus(401);
+    }
+  });
+
   return router;
 
 }
