@@ -3,8 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node server.js",
-    "local": "nodemon server.js",
+    "start": "node bin/server.js",
+    "local": "nodemon bin/server.js",
     "db:reset": "node bin/resetdb.js"
   },
   "dependencies": {
