@@ -8,6 +8,7 @@
     "db:reset": "node bin/resetdb.js"
   },
   "dependencies": {
+    "bcrypt": "^5.0.1",
     "dotenv": "^8.2.0",
     "express": "~4.16.1",
     "morgan": "~1.9.1",
