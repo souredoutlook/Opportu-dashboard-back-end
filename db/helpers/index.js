@@ -1,6 +1,8 @@
 //index.js -> all of the data helpers flow through this file
 
-const { getUsers, getUserByEmail, getUserById, addUser, alterPassword } = require("./users")
+const { core_values_reducer } = require('../../helpers/reducers');
+const { getUsers, getUserByEmail, getUserById, addUser, alterPassword } = require("./users");
+const { getCoreValuesById } = require('./assessments');
 
 /**
  * Compares password to hashed password in db for user with a given email
@@ -78,8 +80,45 @@ exports.addUserIfUnique = addUserIfUnique;
         return null;
       }
     })
-};
-exports.updatePassword = updatePassword;
+  };
+  exports.updatePassword = updatePassword;
+  
+const getAssessmentsByUserId = function(id) {
+  //get all assessments
+
+  const core_values = getCoreValuesById(id)
+    .then(rows => {
+      if (rows) {
+        return core_values_reducer(rows);
+      } else {
+        return null;
+      }
+    });
+  
+  // configure data - example configuration
+  
+  // const assessments = {
+  //   core_values: {},
+  //   facet_5: {},
+  //   strengths: {
+  //     own: {},
+  //     teams: [],
+  //   },
+  // };
+
+  // return configured data
+  return Promise.all([core_values])
+    .then(promises => {
+      const assessments = {};
+
+      if (promises[0]) {
+        assessments.core_values = promises[0];
+      }
+
+      return assessments;
+    })
+}
+exports.getAssessmentsByUserId = getAssessmentsByUserId;
 
 // --- users ---
 exports.getUsers = getUsers;
