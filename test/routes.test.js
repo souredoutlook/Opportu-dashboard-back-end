@@ -13,6 +13,7 @@ const idAdmin = 2;
 const reset = require('../db/helpers/dbReset');
 const divider = require('./.divider');
 
+//reset db for tests
 reset();
 
 describe('All routes', function() {
@@ -219,6 +220,44 @@ describe('All routes', function() {
         .expect(200, done);
       });
 
+      
+
+    });
+
+    describe.only('GET /users/:user_id/assessments', function() {
+      it('responds 403 if session.userId is undefined', function(done) {
+        request(app)
+        .get(`/users/${idUser}/assessments`)
+        .expect(403, done);
+      });
+
+      it('responds 403 if session.userId does not equal req.params.userId', function(done) {
+        adminSession.get(`/users/${idUser}/assessments`)
+        .expect(403, done);
+      });
+
+      it('responds 200 if session.userId == params.userId and response.body lacks core_values key when user has no core_values assessments', function(done) {
+        adminSession.get(`/users/${idAdmin}/assessments`)
+        .expect(200)
+        .then(response => {
+          const { core_values } = response.body;
+          assert(core_values === undefined);
+          done();
+        })
+        .catch(err => done(err));
+      });
+
+      it('responds 200 if session.userId == params.userId and response.body contains a core_values object whose keys contain arrays of length 10', function(done) {
+        userSession.get(`/users/${idUser}/assessments`)
+        .expect(200)
+        .then(response => {
+          const { core_values } = response.body;
+          assert(core_values instanceof Object);
+          assert(core_values[Object.keys(core_values)[0]].length === 10);
+          done();
+        })
+        .catch(err => done(err));
+      });
     });
     
     describe('GET /users', function() {

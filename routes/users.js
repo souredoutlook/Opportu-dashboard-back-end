@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { validateEmail, validatePassword } = require('../helpers/index');
+const { validateEmail, validatePassword } = require('../helpers/validations');
 
 module.exports = (db, bcrypt) => {
 
@@ -66,6 +66,21 @@ module.exports = (db, bcrypt) => {
       res.sendStatus(403);
     }
 
+  });
+
+  router.get('/:userId/assessments', function(req, res) {
+    const userId = req.session && req.session.userId;
+    const paramId = Number(req.params.userId);
+
+    //check session
+    if (userId && userId === paramId) {
+      //retrieve all assessments
+      db.getAssessmentsByUserId(userId)
+      .then(assessments => res.send({...assessments}).status(200));
+    } else {
+      // no session || session is not authorized for this resource
+      res.sendStatus(403);
+    }
   });
 
   router.get('/', function(req, res) {
