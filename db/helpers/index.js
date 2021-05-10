@@ -1,6 +1,6 @@
 //index.js -> all of the data helpers flow through this file
 
-const { getUsers, getUserByEmail, getUserById, addUser } = require("./users")
+const { getUsers, getUserByEmail, getUserById, addUser, alterPassword } = require("./users")
 
 /**
  * Compares password to hashed password in db for user with a given email
@@ -17,7 +17,6 @@ const validateUser = function(email, password, bcrypt) {
         return null;
       }
     });
-
 };
 exports.validateUser = validateUser;
 
@@ -39,10 +38,11 @@ exports.isAdmin = isAdmin;
 
 /**
  * Validates uniqueness of email in db and then calls addUser if valid
- * @param {*} first_name 
- * @param {*} last_name 
- * @param {*} email 
- * @param {*} password 
+ * @param {string} first_name 
+ * @param {string} last_name 
+ * @param {string} email 
+ * @param {string} password 
+ * @param {bcrypt} bcrypt dependency
  * @returns addUser query promise
  */
 const addUserIfUnique = function(first_name, last_name, email, password, bcrypt) {
@@ -58,6 +58,28 @@ const addUserIfUnique = function(first_name, last_name, email, password, bcrypt)
     })
 };
 exports.addUserIfUnique = addUserIfUnique;
+
+/**
+ * Validates uniqueness of email in db and then calls addUser if valid
+ * @param {number} id
+ * @param {string} old_password 
+ * @param {string} new_password
+ * @param {bcrypt} bcrypt dependency
+ * @returns addUser query promise
+ */
+ const updatePassword = function(id, old_password, new_password, bcrypt) {
+  return getUserById(id)
+    .then(res => {
+      if (res && bcrypt.compareSync(old_password, res.password)) {
+        const encryptedPassword = bcrypt.hashSync(new_password, 10);
+        return alterPassword(id, encryptedPassword);
+      } else {
+        //invalid id or wrong password
+        return null;
+      }
+    })
+};
+exports.updatePassword = updatePassword;
 
 // --- users ---
 exports.getUsers = getUsers;
