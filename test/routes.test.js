@@ -5,16 +5,51 @@ const session = require('supertest-session');
 const app = require('../bin/server');
 const assert = require('assert');
 
-const testSession = session(app);
+const userSession = session(app);
+const adminSession = session(app);
+
+const reset = require('../db/helpers/dbReset');
+const divider = require('./.divider');
+
+reset();
 
 describe('All routes', function() {
 
+  before(function() {
+    divider();
+  });
+
+  //setup authenticated session
+  before(function(done) {
+    userSession.post('/sessions')
+    .send({"email": "nicholas@meisen.haus", "password": "password"})
+    .expect(200)
+    .end(function (err) {
+      if (err) return done(err);
+      return done();
+    });
+  });
   
+  //setup authenticated admin session
+  before(function(done) {
+    adminSession.post('/sessions')
+    .send({"email": "nicholas@opportu.com", "password": "password"})
+    .expect(200)
+    .end(function (err) {
+      if (err) return done(err);
+      return done();
+    });
+  });
+
   after((done) => {
     app.close(done);
   });
   
   describe('Index Router', function() {
+
+    before(function() {
+      divider();
+    });
 
     describe('GET /', function() {
       
@@ -29,6 +64,10 @@ describe('All routes', function() {
   });
   
   describe("Session Router", function() {
+
+    before(function() {
+      divider();
+    });
 
     describe('GET /sessions', function() {
       
@@ -63,17 +102,6 @@ describe('All routes', function() {
     
     describe('DELETE /sessions', function() {
       
-      //setup authenticated session 
-      before(function(done) {
-        testSession.post('/sessions')
-        .send({"email": "nicholas@meisen.haus", "password": "password"})
-        .expect(200)
-        .end(function (err) {
-          if (err) return done(err);
-          return done();
-        });
-      });
-      
       it('responds 401 if session.userId is undefined', function(done) {
         request(app)
         .delete('/sessions')
@@ -81,7 +109,7 @@ describe('All routes', function() {
       });
       
       it('responds 200 if session.userId is not undefined', function(done) {
-        testSession.delete('/sessions')
+        userSession.delete('/sessions')
         .expect(200, done);
       })
       
@@ -91,30 +119,11 @@ describe('All routes', function() {
   
   describe('User Router', function() {
 
-    describe.only('POST /users', function() {
-  
-      const adminSession = session(app);
+    before(function() {
+      divider();
+    });
 
-      //setup authenticated session && admin session
-      before(function(done) {
-        testSession.post('/sessions')
-        .send({"email": "nicholas@meisen.haus", "password": "password"})
-        .expect(200)
-        .end(function (err) {
-          if (err) return done(err);
-          return done();
-        });
-      });
-
-      before(function(done) {
-        adminSession.post('/sessions')
-        .send({"email": "nicholas@opportu.com", "password": "password"})
-        .expect(200)
-        .end(function (err) {
-          if (err) return done(err);
-          return done();
-        });
-      });
+    describe('POST /users', function() {
       
       it('responds 401 if session.userId is undefined', function(done) {
         request(app)
@@ -123,7 +132,7 @@ describe('All routes', function() {
       });
 
       it('responds 401 if session.userId is not undefined and user does not have admin privileges', function(done) {
-        testSession.post('/users')
+        userSession.post('/users')
         .expect(401, done);
       });
 
@@ -157,23 +166,10 @@ describe('All routes', function() {
         .send({first_name: "Test", last_name: "McTestFace", email: "valid@email.com", password: "password"})
         .expect(400, done);
       });
-      
-      // it('persists user in db', function(done) {
 
-      //   it('the last indice in the array contains Test McTestFace', function(done) {
-      //     request(app)
-      //     .get('/users')
-      //     .expect(200)
-      //     .then(response => {
-      //       const { first_name, second_name } = response.body[response.body.length - 1];
-      //       assert(first_name === "Test");
-      //       assert(second_name === "McTestFace");
-      //       done();
-      //     })
-      //     .catch(err => done(err));
-      //   });
-  
-      // });
+    });
+
+    describe('PUT /users/:user_id', function() {
 
     });
     
