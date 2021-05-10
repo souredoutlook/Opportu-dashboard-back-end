@@ -76,6 +76,7 @@ const getUserById = function(id) {
   * @param {string} last_name 
   * @param {string} email 
   * @param {string} password 
+  * @returns {object} returns a new user object
   */
  const addUser = function(first_name, last_name, email, password) {
    const queryParams = [first_name, last_name, email, password];
@@ -91,4 +92,31 @@ const getUserById = function(id) {
     })
  }
 
-module.exports = { getUsers, getUserByEmail, getUserById, addUser }
+  /**
+  * Alter a user's password
+  * @param {number} id
+  * @param {string} password
+  * @returns {object} returns an updated user object
+  */
+   const alterPassword= function(id, password) {
+    const queryParams = [id, password];
+    const queryString = `
+    UPDATE users
+    SET password = $2
+    WHERE id = $1
+    RETURNING *;
+    `;
+ 
+    return db.query(queryString, queryParams)
+     .then(res => {
+      if (res.rows.length > 0) {
+        //validations should ensure that only one result is possible
+        return res.rows[0];
+      } else {
+        //return null when no user is found at that id
+        return null;
+      }
+     })
+  }
+
+module.exports = { getUsers, getUserByEmail, getUserById, addUser, alterPassword }
