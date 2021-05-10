@@ -76,7 +76,7 @@ module.exports = (db, bcrypt) => {
     if (userId && userId === paramId) {
       //retrieve all assessments
       db.getAssessmentsByUserId(userId)
-      .then(assessments => res.send({...assessments}).status(200));
+      .then(assessments => res.send({assessments}).status(200));
     } else {
       // no session || session is not authorized for this resource
       res.sendStatus(403);

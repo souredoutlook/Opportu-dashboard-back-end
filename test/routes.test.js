@@ -236,22 +236,22 @@ describe('All routes', function() {
         .expect(403, done);
       });
 
-      it('responds 200 if session.userId == params.userId and response.body lacks core_values key when user has no core_values assessments', function(done) {
+      it('responds 200 if session.userId == params.userId and response.body.assessments lacks core_values key when user has no core_values assessments', function(done) {
         adminSession.get(`/users/${idAdmin}/assessments`)
         .expect(200)
         .then(response => {
-          const { core_values } = response.body;
+          const { core_values } = response.body.assessments;
           assert(core_values === undefined);
           done();
         })
         .catch(err => done(err));
       });
 
-      it('responds 200 if session.userId == params.userId and response.body contains a core_values object whose keys contain arrays of length 10', function(done) {
+      it('responds 200 if session.userId == params.userId and response.body.assessments contains a core_values object whose keys contain arrays of length 10', function(done) {
         userSession.get(`/users/${idUser}/assessments`)
         .expect(200)
         .then(response => {
-          const { core_values } = response.body;
+          const { core_values } = response.body.assessments;
           assert(core_values instanceof Object);
           assert(core_values[Object.keys(core_values)[0]].length === 10);
           done();
