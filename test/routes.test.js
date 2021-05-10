@@ -133,9 +133,9 @@ describe('All routes', function() {
         .expect(401, done);
       });
 
-      it('responds 401 if session.userId is not undefined and user does not have admin privileges', function(done) {
+      it('responds 403 if session.userId does not have admin privileges', function(done) {
         userSession.post('/users')
-        .expect(401, done);
+        .expect(403, done);
       });
 
       it('responds 400 if session.userId is not undefined and user is an admin but request email is invalid', function(done) {
@@ -171,7 +171,7 @@ describe('All routes', function() {
 
     });
 
-    describe.only('PUT /users/:user_id', function() {
+    describe('PUT /users/:user_id', function() {
       it('responds 403 if session.userId is undefined', function(done) {
         request(app)
         .put(`/users/${idUser}`)

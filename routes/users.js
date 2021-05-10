@@ -25,11 +25,12 @@ module.exports = (db, bcrypt) => {
             })
             .catch(err => res.send(err).status(400));
           } else {
+            //invalid request
             res.sendStatus(400);
           }
         } else {
           //not admin
-          res.sendStatus(401);
+          res.sendStatus(403);
         }
       });
     } else {
