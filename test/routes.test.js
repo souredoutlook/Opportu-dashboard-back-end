@@ -6,7 +6,9 @@ const app = require('../bin/server');
 const assert = require('assert');
 
 const userSession = session(app);
+const idUser = 1;
 const adminSession = session(app);
+const idAdmin = 2;
 
 const reset = require('../db/helpers/dbReset');
 const divider = require('./.divider');
@@ -169,7 +171,53 @@ describe('All routes', function() {
 
     });
 
-    describe('PUT /users/:user_id', function() {
+    describe.only('PUT /users/:user_id', function() {
+      it('responds 403 if session.userId is undefined', function(done) {
+        request(app)
+        .put(`/users/${idUser}`)
+        .expect(403, done);
+      });
+
+      it('responds 403 if session.userId does not equal req.params.userId', function(done) {
+        adminSession.put(`/users/${idUser}`)
+        .expect(403, done);
+      });
+
+      it('responds 400 if session.userId == params.userId and old_password is undefined', function(done) {
+        userSession.put(`/users/${idUser}`)
+        .send({new_password: "mynewpassword"})
+        .expect(400, done);
+      });
+
+      it('responds 400 if session.userId == params.userId and old_password is invalid', function(done) {
+        userSession.put(`/users/${idUser}`)
+        .send({old_password: "", new_password: "mynewpassword"})
+        .expect(400, done);
+      })
+
+      it('responds 400 if session.userId == params.userId and new_password is undefined', function(done) {
+        userSession.put(`/users/${idUser}`)
+        .send({old_password: "password"})
+        .expect(400, done);
+      });
+
+      it('responds 400 if session.userId == params.userId and new_password is invalid', function(done) {
+        userSession.put(`/users/${idUser}`)
+        .send({old_password: "password", new_password: ""})
+        .expect(400, done);
+      })
+
+      it('responds 401 if old_password is valid but does not match the password in the database', function(done) {
+        userSession.put(`/users/${idUser}`)
+        .send({old_password: "mynewpassword", new_password: "mynewpassword"})
+        .expect(401, done);
+      });
+
+      it('responds 200 if old_password is correct and inserts new password in the database', function(done) {
+        userSession.put(`/users/${idUser}`)
+        .send({old_password: "password", new_password: "mynewpassword"})
+        .expect(200, done);
+      });
 
     });
     
