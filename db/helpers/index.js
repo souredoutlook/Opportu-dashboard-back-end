@@ -2,7 +2,7 @@
 
 const { core_values_reducer } = require('../../helpers/reducers');
 const { getUsers, getUserByEmail, getUserById, addUser, alterPassword } = require("./users");
-const { getCoreValuesById } = require('./assessments');
+const { getCoreValuesAssessmentsById, addCoreValuesAssessmentById } = require('./assessments');
 
 /**
  * Compares password to hashed password in db for user with a given email
@@ -86,7 +86,7 @@ exports.addUserIfUnique = addUserIfUnique;
 const getAssessmentsByUserId = function(id) {
   //get all assessments
 
-  const core_values = getCoreValuesById(id)
+  const core_values = getCoreValuesAssessmentsById(id)
     .then(rows => {
       if (rows) {
         return core_values_reducer(rows);
@@ -122,3 +122,6 @@ exports.getAssessmentsByUserId = getAssessmentsByUserId;
 
 // --- users ---
 exports.getUsers = getUsers;
+
+// assessments
+exports.addCoreValuesAssessmentById = addCoreValuesAssessmentById;
