@@ -12,6 +12,7 @@ const idAdmin = 2;
 
 const reset = require('../db/helpers/dbReset');
 const divider = require('./.divider');
+const { expect } = require('chai');
 
 //reset db for tests
 reset();
@@ -55,6 +56,10 @@ describe('All routes', function() {
     });
 
     describe('GET /', function() {
+
+      before(function() {
+        divider();
+      });
       
       it('responds with "Hello world"', function(done) {
         request(app)
@@ -66,13 +71,17 @@ describe('All routes', function() {
     
   });
   
-  describe("Session Router", function() {
+  describe("Sessions Router", function() {
 
     before(function() {
       divider();
     });
 
     describe('GET /sessions', function() {
+
+      before(function() {
+        divider();
+      });
       
       it('responds 400 when request is without credentials', function(done) {
         request(app)
@@ -104,6 +113,10 @@ describe('All routes', function() {
     });
     
     describe('DELETE /sessions', function() {
+
+      before(function() {
+        divider();
+      });
       
       it('responds 401 if session.userId is undefined', function(done) {
         request(app)
@@ -120,13 +133,17 @@ describe('All routes', function() {
 
   });
   
-  describe('User Router', function() {
+  describe('Users Router', function() {
 
     before(function() {
       divider();
     });
 
     describe('POST /users', function() {
+
+      before(function() {
+        divider();
+      });
       
       it('responds 401 if session.userId is undefined', function(done) {
         request(app)
@@ -220,11 +237,14 @@ describe('All routes', function() {
         .expect(200, done);
       });
 
-      
-
     });
 
-    describe.only('GET /users/:user_id/assessments', function() {
+    describe('GET /users/:user_id/assessments', function() {
+
+      before(function() {
+        divider();
+      });
+
       it('responds 403 if session.userId is undefined', function(done) {
         request(app)
         .get(`/users/${idUser}/assessments`)
@@ -261,6 +281,10 @@ describe('All routes', function() {
     });
     
     describe('GET /users', function() {
+
+      before(function() {
+        divider();
+      });
       
       it('responds with an array with a length of 1 or greater', function(done) {
         request(app)
@@ -273,6 +297,85 @@ describe('All routes', function() {
         })
         .catch(err => done(err));
       });
+      
+    });
+
+  });
+
+  describe('Assessments Router', function() {
+
+    before(function() {
+      divider();
+    });
+
+    describe('POST /assessments/values', function() {
+
+      before(function() {
+        divider();
+      });
+
+      it('responds 401 if session.userId is undefined', function(done) {
+        request(app)
+        .post('/assessments/values')
+        .expect(401, done);
+      });
+
+      it('responds 403 if session.userId does not have admin privileges', function(done) {
+        userSession.post('/assessments/values')
+        .expect(403, done);
+      });
+
+      it('responds 400 if the user has admin privileges but there is no specified userId', function(done) {
+        adminSession.post('/assessments/values')
+        .send({})
+        .expect(400, done);
+      });
+
+      it('responds 400 if the user has admin privileges but the userId is not valid', function(done) {
+        adminSession.post('/assessments/values')
+        .send({userId: "potato"})
+        .expect(400, done);
+      });
+
+      it('responds 400 if the user has admin privileges but the userId is not valid', function(done) {
+        adminSession.post('/assessments/values')
+        .send({userId: 0})
+        .expect(400, done);
+      });
+
+      it('responds 200 if the user has admin privileges and the userId is valid, returns a new assessment_id', function(done) {
+        adminSession.post('/assessments/values')
+        .send({userId: 1})
+        .expect(200)
+        .then(response => {
+          const {id} = response.body;
+          expect(id !== undefined);
+          done();
+        });
+      });
+
+    })
+
+    describe.only('GET /assessments/values/:assessment_id', function() {
+
+      before(function() {
+        divider();
+      });
+
+      //check session - 401
+ 
+      it('responds 401 if session.userId is undefined', function(done) {
+        request(app)
+        .get('/assessments/values/:assessment_id')
+        .expect(401, done);
+      });
+
+      //check to see if:
+
+      // assessment_id exists
+      // user_id is a match - 403
+      // assessment is incomplete - 400
+
       
     });
 
