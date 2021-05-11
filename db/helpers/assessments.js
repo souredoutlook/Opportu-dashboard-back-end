@@ -74,4 +74,26 @@ const getValuesAssessmentById = function(id) {
      .catch(err => null);
 };
 
-module.exports = { getCoreValuesAssessmentsById, addCoreValuesAssessmentById, getValuesAssessmentById };
+const addCustomValue = function(customValue) {
+
+  const queryParams = [customValue];
+  const queryString = `
+    INSERT INTO custom_values (name)
+    VALUES ($1)
+    RETURNING *;
+  `;
+
+  return db.query(queryString, queryParams)
+    .then(res => {
+      if (res.rows && res.rows.length > 0) {
+        //constraints should ensure that only one row is returned
+        return res.rows[0];
+      } else {
+        //return null when custom value is invalid
+        return null;
+      }
+    })
+
+};
+
+module.exports = { getCoreValuesAssessmentsById, addCoreValuesAssessmentById, getValuesAssessmentById, addCustomValue };
