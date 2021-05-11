@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const { validateRankedValues } = require('../helpers/validations');
 
 module.exports = (db) => {
 
@@ -69,6 +70,53 @@ module.exports = (db) => {
       res.sendStatus(401);
     }
   });
+
+  router.put('/values/:assessment_id', function(req, res) {
+    const userId = req.session && req.session.userId;
+    const {assessment_id} = req.params;
+    const { values } = req.body;
+
+    //check session
+    if (userId) {
+      db.getValuesAssessmentById(assessment_id)
+      .then(core_values_assessment => {
+        if (core_values_assessment) {
+          const { user_id, id, created, completed } = core_values_assessment;
+          if (userId === user_id && completed === null) {
+            if (validateRankedValues(values)) {
+              db.addRankedValues(assessment_id, values)
+                .then(rows => {
+                  if (rows) {
+                    res.sendStatus(200);
+                  } else {
+                    res.sendStatus(400);
+                  }
+                })
+            } else {
+              res.sendStatus(400);
+            }
+          } else if (userId === user_id) {
+            //assessment has already been completed
+            res.sendStatus(401);
+          } else {
+            //assessment is not associated with  the authenticated user
+            res.sendStatus(403);
+          }
+        } else {
+          //assessment_id doesn't exist
+          res.sendStatus(404);
+        }
+      })
+
+    } else {
+      //no session
+      res.sendStatus(401);
+    }
+  });
+
+  
+
+
 
   return router;
 };

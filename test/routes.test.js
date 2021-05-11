@@ -256,7 +256,7 @@ describe('All routes', function() {
         .expect(403, done);
       });
 
-      it('responds 200 if session.userId == params.userId and response.body.assessments lacks core_values key when user has no core_values assessments', function(done) {
+      it('responds 200 if session.userId == params.userId and response.body.assessment ore_va when user has no core_values assessments', function(done) {
         adminSession.get(`/users/${idAdmin}/assessments`)
         .expect(200)
         .then(response => {
@@ -267,7 +267,7 @@ describe('All routes', function() {
         .catch(err => done(err));
       });
 
-      it('responds 200 if session.userId == params.userId and response.body.assessments contains a core_values object whose keys contain arrays of length 10', function(done) {
+      it('responds 200 if session.userId == params.userId and response.body.assessments contains a core_values object which contains an array of length 10', function(done) {
         userSession.get(`/users/${idUser}/assessments`)
         .expect(200)
         .then(response => {
@@ -356,14 +356,12 @@ describe('All routes', function() {
 
     })
 
-    describe.only('GET /assessments/values/:assessment_id', function() {
+    describe('GET /assessments/values/:assessment_id', function() {
 
       before(function() {
         divider();
       });
 
-      //check session - 401
- 
       it('responds 401 if session.userId is undefined', function(done) {
         request(app)
         .get('/assessments/values/3')
@@ -376,7 +374,7 @@ describe('All routes', function() {
       });
 
       it('responds 404 if assessment_id is valid but does not exist', function(done) {
-        adminSession.get('/assessments/values/3')
+        adminSession.get('/assessments/values/99')
         .expect(404, done);
       });
 
@@ -399,6 +397,116 @@ describe('All routes', function() {
           expect(created instanceof Date);
           done();
         })
+      });
+      
+    });
+
+    describe('PUT /assessments/values/:assessment_id', function(done) {
+
+      before(function() {
+        divider();
+      });
+
+      it('responds 401 if session.userId is undefined', function(done) {
+        request(app)
+        .put('/assessments/values/3')
+        .expect(401, done);
+      });
+      
+      it('responds 404 if assessment_id is invalid', function(done) {
+        adminSession.put('/assessments/values/potato')
+        .expect(404, done);
+      });
+
+      it('responds 404 if assessment_id is valid but does not exist', function(done) {
+        adminSession.put('/assessments/values/99')
+        .expect(404, done);
+      });
+
+      it('responds 403 if assessment_id is associated with another user', function(done) {
+        adminSession.put('/assessments/values/1')
+        .expect(403, done);
+      });
+
+      it('responds 401 if assessment_id is associated with an assessment that the user already completed', function(done) {
+        userSession.put('/assessments/values/1')
+        .expect(401, done);
+      });
+
+      it('responds 400 if the assessment_id is valid and there are less than 10 values submitted', function(done) {
+        userSession.put('/assessments/values/2')
+        .send({
+          values: [
+            { value: 'Appreciation', is_custom: false },
+            { value: 'Attractiveness', is_custom: false },
+            { value: 'Autonomy', is_custom: false },
+            { value: 'Balance', is_custom: false },
+            { value: 'Being the Best', is_custom: false },
+            { value: 'Benevolence', is_custom: false },
+            { value: 'Boldness', is_custom: false },
+            { value: 'Brilliance', is_custom: false },
+            { value: 'Calmness', is_custom: false },
+          ]
+        })
+        .expect(400, done);
+      });
+
+      it('responds 400 if the assessment_id is valid and there are more than 10 values submitted', function(done) {
+        userSession.put('/assessments/values/2')
+        .send({
+          values: [
+            { value: 'Appreciation', is_custom: false },
+            { value: 'Attractiveness', is_custom: false },
+            { value: 'Autonomy', is_custom: false },
+            { value: 'Balance', is_custom: false },
+            { value: 'Being the Best', is_custom: false },
+            { value: 'Benevolence', is_custom: false },
+            { value: 'Boldness', is_custom: false },
+            { value: 'Brilliance', is_custom: false },
+            { value: 'Calmness', is_custom: false },
+            { value: 'Raditude', is_custom: true },
+            { value: 'Caring', is_custom: false },
+          ]
+        })
+        .expect(400, done);
+      });
+
+      it('responds 400 if the assessment_id is valid and there is a duplicate non-custom value', function(done) {
+        userSession.put('/assessments/values/2')
+        .send({
+          values: [
+            { value: 'Appreciation', is_custom: false },
+            { value: 'Attractiveness', is_custom: false },
+            { value: 'Autonomy', is_custom: false },
+            { value: 'Balance', is_custom: false },
+            { value: 'Being the Best', is_custom: false },
+            { value: 'Benevolence', is_custom: false },
+            { value: 'Boldness', is_custom: false },
+            { value: 'Brilliance', is_custom: false },
+            { value: 'Calmness', is_custom: false },
+            { value: 'Appreciation', is_custom: false },
+          ]
+        })
+        .expect(400, done);
+      });
+
+      it('responds 200 if the assessment_id is valid and the update is successful', function(done) {
+        userSession.put('/assessments/values/2')
+        .send({
+          values: [
+            { value: 'Appreciation', is_custom: false },
+            { value: 'Attractiveness', is_custom: false },
+            { value: 'Autonomy', is_custom: false },
+            { value: 'Balance', is_custom: false },
+            { value: 'Being the Best', is_custom: false },
+            { value: 'Benevolence', is_custom: false },
+            { value: 'Boldness', is_custom: false },
+            { value: 'Brilliance', is_custom: false },
+            { value: 'Calmness', is_custom: false },
+            { value: 'Raditude', is_custom: true },
+          ]
+        })
+        .expect(200, done);
       });
       
     });
