@@ -5,7 +5,8 @@
   "scripts": {
     "start": "node bin/server.js",
     "local": "nodemon bin/server.js",
-    "db:reset": "node bin/resetdb.js"
+    "db:reset": "node bin/resetdb.js",
+    "test": "mocha"
   },
   "dependencies": {
     "bcrypt": "^5.0.1",
