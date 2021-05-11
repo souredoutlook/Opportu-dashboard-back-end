@@ -48,4 +48,30 @@ const getCoreValuesAssessmentsById = function(id) {
      .catch(err => null);
 };
 
-module.exports = { getCoreValuesAssessmentsById, addCoreValuesAssessmentById };
+/**
+ * Get an assessment by assessment_id
+ * @param {number} id 
+ * @returns {object} returns assessment object
+ */
+const getValuesAssessmentById = function(id) {
+  const queryParams = [id]
+  const queryString = `
+    SELECT *
+    FROM values_assessments
+    WHERE id = $1;
+  `;
+
+  return db.query(queryString, queryParams)
+     .then(res => {
+      if (res.rows && res.rows.length > 0) {
+        //constraints should ensure that only one row is returned
+        return res.rows[0];
+      } else {
+        //return null when no assessments are associated with that id
+        return null;
+      }
+     })
+     .catch(err => null);
+};
+
+module.exports = { getCoreValuesAssessmentsById, addCoreValuesAssessmentById, getValuesAssessmentById };
