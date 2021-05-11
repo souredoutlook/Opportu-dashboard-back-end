@@ -366,16 +366,40 @@ describe('All routes', function() {
  
       it('responds 401 if session.userId is undefined', function(done) {
         request(app)
-        .get('/assessments/values/:assessment_id')
+        .get('/assessments/values/3')
+        .expect(401, done);
+      });
+      
+      it('responds 404 if assessment_id is invalid', function(done) {
+        adminSession.get('/assessments/values/potato')
+        .expect(404, done);
+      });
+
+      it('responds 404 if assessment_id is valid but does not exist', function(done) {
+        adminSession.get('/assessments/values/3')
+        .expect(404, done);
+      });
+
+      it('responds 403 if assessment_id is associated with another user', function(done) {
+        adminSession.get('/assessments/values/1')
+        .expect(403, done);
+      });
+
+      it('responds 401 if assessment_id is associated with an assessment that the user already completed', function(done) {
+        userSession.get('/assessments/values/1')
         .expect(401, done);
       });
 
-      //check to see if:
-
-      // assessment_id exists
-      // user_id is a match - 403
-      // assessment is incomplete - 400
-
+      it('responds 200 if assessment is associated with authenticated user and incomplete, returns assessment_id and creation timestamp', function(done) {
+        userSession.get('/assessments/values/2')
+        .expect(200)
+        .then(response => {
+          const { id, created } = response && response.body;
+          expect(id instanceof Number);
+          expect(created instanceof Date);
+          done();
+        })
+      });
       
     });
 
