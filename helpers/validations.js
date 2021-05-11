@@ -21,4 +21,37 @@ const validatePassword = function(password) {
   return re.test(password)
 }
 
-module.exports = { validateEmail, validatePassword };
+/**
+ * Checks ranked values against various constraints
+ * @param {array} values an array of values objects
+ * @returns boolean
+ */
+const validateRankedValues = function(values) {
+
+  if (values instanceof Array && values.length === 10) {
+    const core_values = values.reduce((prev, current) => {
+      if (!current.is_custom) {
+        return [...prev, current.value]
+      } else {
+        return prev;
+      }
+    }, []);
+
+    while (core_values.length > 1) {
+      const element = core_values.shift();
+      if (core_values.includes(element)) {
+        //core values are not unique
+        return false;
+      }
+    };
+
+    return true
+
+  } else {
+    //length is not valid
+    return false
+
+  }
+};
+
+module.exports = { validateEmail, validatePassword, validateRankedValues };
