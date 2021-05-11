@@ -2,7 +2,8 @@
 
 const { core_values_reducer } = require('../../helpers/reducers');
 const { getUsers, getUserByEmail, getUserById, addUser, alterPassword } = require("./users");
-const { getCoreValuesAssessmentsById, addCoreValuesAssessmentById, getValuesAssessmentById } = require('./assessments');
+const { getCoreValuesAssessmentsById, addCoreValuesAssessmentById, getValuesAssessmentById, addCustomValue } = require('./assessments');
+const db = require('../pool');
 
 /**
  * Compares password to hashed password in db for user with a given email
@@ -120,9 +121,70 @@ const getAssessmentsByUserId = function(id) {
 }
 exports.getAssessmentsByUserId = getAssessmentsByUserId;
 
+/**
+ * 
+ * @param {*} assessment_id 
+ * @param {*} values 
+ * @returns 
+ */
+const addRankedValues = function(assessment_id, values) {
+
+  const promises = [];
+
+  for (const value of values) {
+    if (value.is_custom) {
+      promises.push(addCustomValue(value.value))
+    }
+  }
+
+  const queryParams = [assessment_id];
+  let queryString = `
+    INSERT INTO ranked_values (assessment_id, core_value, custom_value_id, rank)
+    VALUES
+  `;
+
+  return Promise.all(promises)
+    .then(promises => {
+      for (const [index, value] of values.entries()) {
+        
+        if (value.is_custom) {
+          const custom_value = promises.shift()
+          if (custom_value) {
+            queryString += ` ($1, NULL, ${custom_value.id}, ${index + 1})`;
+          } else {
+            //custom value insertion failed
+            return null;
+          }
+        } else {
+          queryParams.push(value.value);
+          queryString += ` ($1, $${queryParams.length}, NULL, ${index + 1})`;
+        }
+
+        index < values.length -1 ? queryString += ',' : queryString += ' RETURNING *;';
+
+      }
+
+      return db.query(queryString, queryParams)
+        .then(response => {
+          if (response.rows && response.rows.length > 0) {
+            return response.rows;
+          } else {
+            //insertion has failed
+            return null;
+          }
+        })
+    })
+    .catch(err => console.log(err));
+
+};
+exports.addRankedValues = addRankedValues;
+
 // --- users ---
 exports.getUsers = getUsers;
 
 // assessments
 exports.addCoreValuesAssessmentById = addCoreValuesAssessmentById;
 exports.getValuesAssessmentById = getValuesAssessmentById;
+
+// --- test ---
+
