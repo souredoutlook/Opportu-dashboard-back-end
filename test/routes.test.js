@@ -77,7 +77,7 @@ describe('All routes', function() {
       divider();
     });
 
-    describe('GET /sessions', function() {
+    describe('POST /sessions', function() {
 
       before(function() {
         divider();
