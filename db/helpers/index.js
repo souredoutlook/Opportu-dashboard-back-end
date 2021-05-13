@@ -15,7 +15,7 @@ const validateUser = function(email, password, bcrypt) {
   return getUserByEmail(email)
     .then(res => {
       if (res && bcrypt.compareSync(password, res.password)) {
-        return res.id
+        return res;
       } else {
         return null;
       }

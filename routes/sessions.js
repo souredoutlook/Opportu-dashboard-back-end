@@ -9,10 +9,11 @@ module.exports = (db, bcrypt) => {
     
     if (email && password) {
       db.validateUser(email, password, bcrypt)
-      .then((id)=>{
-        if (id) {
+      .then((user)=>{
+        if (user) {
+          const {id, first_name, last_name, is_admin} = user;
           req.session.userId = id; 
-          res.sendStatus(200);
+          res.send({first_name, last_name, is_admin}).status(200);
         } else {
           res.sendStatus(401);
         }
