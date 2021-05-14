@@ -107,7 +107,12 @@ describe('All routes', function() {
         request(app)
         .post('/sessions')
         .send({"email": "nicholas@meisen.haus", "password": "password"})
-        .expect(200, done);
+        .expect(200)
+        .then(response => {
+          const keys = Object.keys(response.body);
+          expect(keys.length === 3);
+          done();
+        })
       });
       
     });
