@@ -7,11 +7,11 @@ const db = require("../pool")
 const getUsers = function() {
   const queryParams = [];
   const queryString = `
-    SELECT first_name, last_name, teams.name as team_name, groups.name as group_name
+    SELECT users.id as id, first_name, last_name, teams.name as team_name, groups.name as group_name
     FROM users
-    JOIN assignments on users.id = user_id
-    JOIN teams on team_id = teams.id
-    JOIN groups on group_id = groups.id;
+    FULL OUTER JOIN assignments on users.id = user_id
+    FULL OUTER JOIN teams on team_id = teams.id
+    FULL OUTER JOIN groups on group_id = groups.id;
   `;
 
   return db.query(queryString, queryParams)
