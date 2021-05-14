@@ -17,7 +17,7 @@ const validateEmail = function(email) {
  */
 const validatePassword = function(password) {
   // const re = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/; //at least one character and one number, minimum eight characters
-  const re = /^[~`! @#$%^&*()_\-+={[}\]|\\:;"'<,>.?\/A-Za-z\d]{8,}$/ //minimum eight characters inclusive of the following special characters: ~`! @#$%^&*()_-+={[}]|\:;"'<,>.?/
+  const re = /^[~`!@#$%^&*()_\-+={[}\]|\\:;"'<,>.?\/A-Za-z\d]{8,}$/ //minimum eight characters inclusive of the following special characters: ~`!@#$%^&*()_-+={[}]|\:;"'<,>.?/
   return re.test(password)
 }
 
