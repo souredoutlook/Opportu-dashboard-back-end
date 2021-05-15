@@ -94,7 +94,6 @@ VALUES
   ('Popularity'),
   ('Power'),
   ('Preparedness'),
-  ('Proactivity Professionalism'),
   ('Punctuality Recognition'),
   ('Relationships'),
   ('Reliability'),
