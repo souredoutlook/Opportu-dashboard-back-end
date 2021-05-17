@@ -442,15 +442,15 @@ describe('All routes', function() {
         userSession.put('/assessments/values/2')
         .send({
           values: [
-            { value: 'Appreciation', is_custom: false },
-            { value: 'Attractiveness', is_custom: false },
+            { value: 'Ambition', is_custom: false },
+            { value: 'Authority', is_custom: false },
             { value: 'Autonomy', is_custom: false },
-            { value: 'Balance', is_custom: false },
-            { value: 'Being the Best', is_custom: false },
-            { value: 'Benevolence', is_custom: false },
+            { value: 'Beauty', is_custom: false },
+            { value: 'Belonging', is_custom: false },
             { value: 'Boldness', is_custom: false },
-            { value: 'Brilliance', is_custom: false },
-            { value: 'Calmness', is_custom: false },
+            { value: 'Buoyancy', is_custom: false },
+            { value: 'Calm', is_custom: false },
+            { value: 'Celebrity/Fame', is_custom: false },
           ]
         })
         .expect(400, done);
@@ -460,17 +460,17 @@ describe('All routes', function() {
         userSession.put('/assessments/values/2')
         .send({
           values: [
-            { value: 'Appreciation', is_custom: false },
-            { value: 'Attractiveness', is_custom: false },
+            { value: 'Ambition', is_custom: false },
+            { value: 'Authority', is_custom: false },
             { value: 'Autonomy', is_custom: false },
-            { value: 'Balance', is_custom: false },
-            { value: 'Being the Best', is_custom: false },
-            { value: 'Benevolence', is_custom: false },
+            { value: 'Beauty', is_custom: false },
+            { value: 'Belonging', is_custom: false },
             { value: 'Boldness', is_custom: false },
-            { value: 'Brilliance', is_custom: false },
-            { value: 'Calmness', is_custom: false },
+            { value: 'Buoyancy', is_custom: false },
+            { value: 'Calm', is_custom: false },
+            { value: 'Celebrity/Fame', is_custom: false },
             { value: 'Raditude', is_custom: true },
-            { value: 'Caring', is_custom: false },
+            { value: 'Certainty', is_custom: false },
           ]
         })
         .expect(400, done);
@@ -480,16 +480,16 @@ describe('All routes', function() {
         userSession.put('/assessments/values/2')
         .send({
           values: [
-            { value: 'Appreciation', is_custom: false },
-            { value: 'Attractiveness', is_custom: false },
+            { value: 'Ambition', is_custom: false },
+            { value: 'Authority', is_custom: false },
             { value: 'Autonomy', is_custom: false },
-            { value: 'Balance', is_custom: false },
-            { value: 'Being the Best', is_custom: false },
-            { value: 'Benevolence', is_custom: false },
+            { value: 'Beauty', is_custom: false },
+            { value: 'Belonging', is_custom: false },
             { value: 'Boldness', is_custom: false },
-            { value: 'Brilliance', is_custom: false },
-            { value: 'Calmness', is_custom: false },
-            { value: 'Appreciation', is_custom: false },
+            { value: 'Buoyancy', is_custom: false },
+            { value: 'Calm', is_custom: false },
+            { value: 'Celebrity/Fame', is_custom: false },
+            { value: 'Ambition', is_custom: false },
           ]
         })
         .expect(400, done);
@@ -499,15 +499,15 @@ describe('All routes', function() {
         userSession.put('/assessments/values/2')
         .send({
           values: [
-            { value: 'Appreciation', is_custom: false },
-            { value: 'Attractiveness', is_custom: false },
+            { value: 'Ambition', is_custom: false },
+            { value: 'Authority', is_custom: false },
             { value: 'Autonomy', is_custom: false },
-            { value: 'Balance', is_custom: false },
-            { value: 'Being the Best', is_custom: false },
-            { value: 'Benevolence', is_custom: false },
+            { value: 'Beauty', is_custom: false },
+            { value: 'Belonging', is_custom: false },
             { value: 'Boldness', is_custom: false },
-            { value: 'Brilliance', is_custom: false },
-            { value: 'Calmness', is_custom: false },
+            { value: 'Buoyancy', is_custom: false },
+            { value: 'Calm', is_custom: false },
+            { value: 'Celebrity/Fame', is_custom: false },
             { value: 'Raditude', is_custom: true },
           ]
         })
