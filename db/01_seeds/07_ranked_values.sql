@@ -9,11 +9,11 @@ VALUES
   --4
   (1, 'Achievement', NULL, 4),
   --5
-  (1, 'Advancement', NULL, 5),
+  (1, 'Accomplishment', NULL, 5),
   --6
   (1, 'Adventure', NULL, 6),
   --7
-  (1, 'Advocacy', NULL, 7),
+  (1, 'Autonomy', NULL, 7),
   --8
   (1, 'Ambition', NULL, 8),
   --9
