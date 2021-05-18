@@ -2,12 +2,12 @@
 
 const core_values_reducer = function(rows) {
   return rows.reduce((prev, cur)=> {
-    const { assessment_id, core_value, custom_value } = cur;
+    const { assessment_id, core_value, custom_value, completed } = cur;
 
     if (prev[assessment_id] === undefined) {
-      prev[assessment_id] = [core_value || custom_value];
+      prev[assessment_id] = {values: [core_value || custom_value], completed };
     } else {
-      prev[assessment_id].push(core_value || custom_value);
+      prev[assessment_id].values.push(core_value || custom_value);
     }
 
     return prev;
