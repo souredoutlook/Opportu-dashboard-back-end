@@ -96,4 +96,26 @@ const addCustomValue = function(customValue) {
 
 };
 
-module.exports = { getCoreValuesAssessmentsById, addCoreValuesAssessmentById, getValuesAssessmentById, addCustomValue };
+const updateValuesAssessmentById = function(assessment_id) {
+  const queryParams = [assessment_id];
+  const queryString = `
+    UPDATE values_assessments
+    SET completed = NOW()::TIMESTAMP
+    WHERE id = $1
+    RETURNING *;
+  `
+  return db.query(queryString, queryParams)
+    .then(res => {
+      if (res.rows && res.rows.length > 0) {
+        console.log(res.rows[0]);
+        //constraints should ensure that only one row is returned
+        return res.rows[0];
+      } else {
+        //return null when assessment_id is invalid
+        return null;
+      }
+    })
+    .catch(err => null);
+}
+
+module.exports = { getCoreValuesAssessmentsById, addCoreValuesAssessmentById, getValuesAssessmentById, addCustomValue, updateValuesAssessmentById };
