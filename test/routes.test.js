@@ -110,7 +110,7 @@ describe('All routes', function() {
         .expect(200)
         .then(response => {
           const keys = Object.keys(response.body);
-          expect(keys.length === 3);
+          expect(keys.length === 4);
           done();
         })
       });
@@ -278,7 +278,7 @@ describe('All routes', function() {
         .then(response => {
           const { core_values } = response.body.assessments;
           assert(core_values instanceof Object);
-          assert(core_values[Object.keys(core_values)[0]].length === 10);
+          assert(core_values[Object.keys(core_values)[0]].values.length === 10);
           done();
         })
         .catch(err => done(err));
