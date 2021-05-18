@@ -4,12 +4,12 @@ const getCoreValuesAssessmentsById = function(id) {
 
   const queryParams = [id];
   const queryString = `
-  SELECT user_id, assessment_id, core_value, name as custom_value, rank
-  FROM values_assessments
-  JOIN ranked_values ON values_assessments.id = assessment_id
-  FULL OUTER JOIN custom_values ON custom_value_id = custom_values.id
-  WHERE user_id = $1
-  ORDER BY assessment_id, rank;
+    SELECT completed, user_id, assessment_id, core_value, name as custom_value, rank
+    FROM values_assessments
+    JOIN ranked_values ON values_assessments.id = assessment_id
+    FULL OUTER JOIN custom_values ON custom_value_id = custom_values.id
+    WHERE user_id = $1
+    ORDER BY completed DESC, assessment_id, rank;
   `
 
   return db.query(queryString, queryParams)
@@ -107,7 +107,6 @@ const updateValuesAssessmentById = function(assessment_id) {
   return db.query(queryString, queryParams)
     .then(res => {
       if (res.rows && res.rows.length > 0) {
-        console.log(res.rows[0]);
         //constraints should ensure that only one row is returned
         return res.rows[0];
       } else {
