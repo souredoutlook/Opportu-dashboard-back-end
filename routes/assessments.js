@@ -87,7 +87,14 @@ module.exports = (db) => {
               db.addRankedValues(assessment_id, values)
                 .then(rows => {
                   if (rows) {
-                    res.sendStatus(200);
+                    db.updateValuesAssessmentById(assessment_id)
+                    .then(row => {
+                      if (row) {
+                        res.send({...row}).status(200);
+                      } else {
+                        res.sendStatus(400);
+                      }
+                    })
                   } else {
                     res.sendStatus(400);
                   }
