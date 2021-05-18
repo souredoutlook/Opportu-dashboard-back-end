@@ -13,7 +13,7 @@ module.exports = (db, bcrypt) => {
         if (user) {
           const {id, first_name, last_name, is_admin} = user;
           req.session.userId = id; 
-          res.send({first_name, last_name, is_admin}).status(200);
+          res.send({id, first_name, last_name, is_admin}).status(200);
         } else {
           res.sendStatus(401);
         }
