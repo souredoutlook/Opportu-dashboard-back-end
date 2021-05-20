@@ -117,4 +117,28 @@ const updateValuesAssessmentById = function(assessment_id) {
     .catch(err => null);
 }
 
-module.exports = { getCoreValuesAssessmentsById, addCoreValuesAssessmentById, getValuesAssessmentById, addCustomValue, updateValuesAssessmentById };
+/**
+ * Creates a new facet_5_assessment for the specified user
+ * @param {number} id of user 
+ * @returns {number} returns a facet_5_assessment_id or null if the given user_id is not valid
+ */
+ const addFacet5AssessmentById = function(id) {
+  const queryParams = [id]
+  const queryString = `
+    INSERT INTO facet_5_assessments (user_id)
+    VALUES ($1)
+    RETURNING *;
+  `;
+
+  return db.query(queryString, queryParams)
+     .then(res => {
+      if (res.rows && res.rows.length > 0) {
+        return res.rows[0];
+      } else {
+        //return null when no assessments are associated with that id
+        return null;
+      }
+     })
+     .catch(err => null);
+};
+module.exports = { getCoreValuesAssessmentsById, addCoreValuesAssessmentById, getValuesAssessmentById, addCustomValue, updateValuesAssessmentById, addFacet5AssessmentById };
