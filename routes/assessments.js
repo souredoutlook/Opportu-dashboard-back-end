@@ -121,6 +121,41 @@ module.exports = (db) => {
     }
   });
 
+  router.post('/facets', function(req, res) {
+    const userId = req.session && req.session.userId;
+    const id = req.body.userId;
+    
+    //check session
+    if (userId) {
+      //check if user is admin
+      db.isAdmin(userId)
+      .then(isAdmin => {
+        if (isAdmin) {
+         // if they are admin
+         if (id) {
+           db.addFacet5AssessmentById(id)
+            .then(facet_5_assessment_id => {
+              if (facet_5_assessment_id) {
+                res.send(facet_5_assessment_id).status(200);
+              } else {
+                //no user at the provided id
+                res.sendStatus(400);
+              }
+            });
+         } else {
+           // no id provided
+           res.sendStatus(400);
+         }
+        } else {
+          //not admin
+          res.sendStatus(403);
+        }
+      });
+    } else {
+      //no session
+      res.sendStatus(401);
+    }
+  });
   
 
 

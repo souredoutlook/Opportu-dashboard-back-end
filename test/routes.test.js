@@ -516,6 +516,54 @@ describe('All routes', function() {
       
     });
 
+    describe('POST /assessments/facets', function() {
+
+      before(function() {
+        divider();
+      });
+
+      it('responds 401 if session.userId is undefined', function(done) {
+        request(app)
+        .post('/assessments/facets')
+        .expect(401, done);
+      });
+
+      it('responds 403 if session.userId does not have admin privileges', function(done) {
+        userSession.post('/assessments/facets')
+        .expect(403, done);
+      });
+
+      it('responds 400 if the user has admin privileges but there is no specified userId', function(done) {
+        adminSession.post('/assessments/facets')
+        .send({})
+        .expect(400, done);
+      });
+
+      it('responds 400 if the user has admin privileges but the userId is not valid', function(done) {
+        adminSession.post('/assessments/facets')
+        .send({userId: "potato"})
+        .expect(400, done);
+      });
+
+      it('responds 400 if the user has admin privileges but the userId is not valid', function(done) {
+        adminSession.post('/assessments/facets')
+        .send({userId: 0})
+        .expect(400, done);
+      });
+
+      it('responds 200 if the user has admin privileges and the userId is valid, returns a new assessment_id', function(done) {
+        adminSession.post('/assessments/facets')
+        .send({userId: 1})
+        .expect(200)
+        .then(response => {
+          const {id} = response.body;
+          expect(id !== undefined);
+          done();
+        });
+      });
+
+    })
+
   });
   
 });
