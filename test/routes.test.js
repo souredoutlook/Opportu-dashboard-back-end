@@ -564,6 +564,96 @@ describe('All routes', function() {
 
     })
 
+    describe('PUT /assessments/facets/:assessment_id', function(done) {
+
+      before(function() {
+        divider();
+      });
+
+      it('responds 401 if session.userId is undefined', function(done) {
+        request(app)
+        .put('/assessments/facets/2')
+        .expect(401, done);
+      });
+      
+      it('responds 404 if assessment_id is invalid', function(done) {
+        adminSession.put('/assessments/facets/potato')
+        .expect(404, done);
+      });
+
+      it('responds 404 if assessment_id is valid but does not exist', function(done) {
+        adminSession.put('/assessments/facets/99')
+        .expect(404, done);
+      });
+
+      it('responds 403 if assessment_id is associated with another user', function(done) {
+        adminSession.put('/assessments/facets/2')
+        .expect(403, done);
+      });
+
+      it('responds 401 if assessment_id is associated with an assessment that the user already completed', function(done) {
+        adminSession.put('/assessments/facets/1')
+        .expect(401, done);
+      });
+
+      it('responds 400 if the assessment_id is valid and there are less than 5 facets submitted', function(done) {
+        userSession.put('/assessments/facets/2')
+        .send({
+          facets: {
+            will: 10,
+            energy: 10,
+            control: 10,
+            emotionality: 10,
+          }
+        })
+        .expect(400, done);
+      });
+
+      it('responds 400 if the assessment_id is valid and there are more than 5 facets submitted', function(done) {
+        userSession.put('/assessments/facets/2')
+        .send({
+          facets: {
+            will: 10,
+            energy: 10,
+            control: 10,
+            emotionality: 10,
+            affection: 10,
+            raditude: 10,
+          }
+        })
+        .expect(400, done);
+      });
+
+      it('responds 400 if the assessment_id is valid but not all facets are valid', function(done) {
+        userSession.put('/assessments/facets/2')
+        .send({
+          facets: {
+            will: 10,
+            energy: 10,
+            control: 10,
+            emotionality: 10,
+            raditude: 10,
+          }
+        })
+        .expect(400, done);
+      });
+
+      it('responds 200 if the assessment_id is valid and the update is successful', function(done) {
+        userSession.put('/assessments/facets/2')
+        .send({
+          facets: {
+            will: 10,
+            energy: 10,
+            control: 10,
+            emotionality: 10,
+            affection: 10,
+          }
+        })
+        .expect(200, done);
+      });
+      
+    });
+
   });
   
 });

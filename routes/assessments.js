@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { validateRankedValues } = require('../helpers/validations');
+const { validateRankedValues, validateFacets } = require('../helpers/validations');
 
 module.exports = (db) => {
 
@@ -157,8 +157,49 @@ module.exports = (db) => {
     }
   });
   
+  router.put('/facets/:assessment_id', function(req, res) {
+    const userId = req.session && req.session.userId;
+    const {assessment_id} = req.params;
+    const { facets } = req.body;
 
+    //check session
+    if (userId) {
+      db.getFacet5AssessmentById(assessment_id)
+      .then(facet_5_assessment => {
+        if (facet_5_assessment) {
+          const { user_id, id, completed } = facet_5_assessment;
+          if (userId === user_id && completed === null) {
+            if (validateFacets(facets)) {
+              db.updateFacet5AssessmentById(assessment_id, facets)
+                .then(row => {
+                      if (row) {
+                        res.send({...row}).status(200);
+                      } else {
+                        res.sendStatus(400);
+                      }
+                    })
+            } else {
+              console.log('Its me')
+              res.sendStatus(400);
+            }
+          } else if (userId === user_id) {
+            //assessment has already been completed
+            res.sendStatus(401);
+          } else {
+            //assessment is not associated with  the authenticated user
+            res.sendStatus(403);
+          }
+        } else {
+          //assessment_id doesn't exist
+          res.sendStatus(404);
+        }
+      })
 
+    } else {
+      //no session
+      res.sendStatus(401);
+    }
+  });
 
   return router;
 };
