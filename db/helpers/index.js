@@ -104,12 +104,22 @@ const getAssessmentsByUserId = function(id) {
         return null;
       }
     });
+
+  const facets = getFacet5AssessmentById(id, true)
+    .then(row => {
+      if (row) {
+        const { will, energy, control, emotionality, affection } = row;
+        return { will, energy, control, emotionality, affection };
+      } else {
+        return null;
+      }
+    });
   
   // configure data - example configuration
   
   // const assessments = {
   //   core_values: {},
-  //   facet_5: {},
+  //   facets: {},
   //   strengths: {
   //     own: {},
   //     teams: [],
@@ -117,12 +127,16 @@ const getAssessmentsByUserId = function(id) {
   // };
 
   // return configured data
-  return Promise.all([core_values])
+  return Promise.all([core_values, facets])
     .then(promises => {
       const assessments = {};
 
       if (promises[0]) {
         assessments.core_values = promises[0];
+      }
+
+      if (promises[1]) {
+        assessments.facets = promises[1];
       }
 
       return assessments;
