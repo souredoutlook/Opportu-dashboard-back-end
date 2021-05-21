@@ -290,9 +290,20 @@ describe('All routes', function() {
       before(function() {
         divider();
       });
-      
-      it('responds with an array with a length of 1 or greater', function(done) {
+        
+      it('responds 401 if session.userId is undefined', function(done) {
         request(app)
+        .get('/users')
+        .expect(401, done);
+      });
+
+      it('responds 403 if session.userId does not have admin privileges', function(done) {
+        userSession.get('/users')
+        .expect(403, done);
+      });
+      
+      it('responds with 200 and an array with a length of 1 or greater if session.userId has admin privileges', function(done) {
+        adminSession
         .get('/users')
         .expect(200)
         .then(response => {
