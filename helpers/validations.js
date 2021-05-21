@@ -54,4 +54,34 @@ const validateRankedValues = function(values) {
   }
 };
 
-module.exports = { validateEmail, validatePassword, validateRankedValues };
+/**
+ * Checks facets object against various constraints
+ * @param {object} facets 
+ */
+const validateFacets = function(facets) {
+  const keys = Object.keys(facets);
+  //check the number of keys
+  if (keys && keys.length === 5) {
+    const {will, energy, control, emotionality, affection} = facets;
+    //check to see if all required keys are NOT undefined
+    if (will && energy && control && emotionality && affection) {
+      for (const key of keys) {
+        const value = facets[key];
+        //check to see if the value at key is a number within range
+        if (typeof value !== 'number' || value <= 0 || value > 10) {
+          //not a valid number
+          return false;
+        }
+      }
+      return true;
+    } else {
+      //not all required keys are defined
+      return false;
+    }
+  } else {
+    //number of keys is wrong
+    return false;
+  }
+};
+
+module.exports = { validateEmail, validatePassword, validateRankedValues, validateFacets };
