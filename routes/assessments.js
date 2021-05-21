@@ -179,7 +179,6 @@ module.exports = (db) => {
                       }
                     })
             } else {
-              console.log('Its me')
               res.sendStatus(400);
             }
           } else if (userId === user_id) {
