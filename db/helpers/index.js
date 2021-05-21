@@ -8,7 +8,9 @@ const {
   getValuesAssessmentById,
   addCustomValue,
   updateValuesAssessmentById,
-  addFacet5AssessmentById
+  addFacet5AssessmentById,
+  getFacet5AssessmentById,
+  updateFacet5AssessmentById,
 } = require('./assessments');
 const db = require('../pool');
 
@@ -194,6 +196,8 @@ exports.addCoreValuesAssessmentById = addCoreValuesAssessmentById;
 exports.getValuesAssessmentById = getValuesAssessmentById;
 exports.updateValuesAssessmentById = updateValuesAssessmentById;
 exports.addFacet5AssessmentById = addFacet5AssessmentById;
+exports.getFacet5AssessmentById = getFacet5AssessmentById;
+exports.updateFacet5AssessmentById = updateFacet5AssessmentById;
 
 // --- test ---
 
