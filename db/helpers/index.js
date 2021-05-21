@@ -108,8 +108,8 @@ const getAssessmentsByUserId = function(id) {
   const facets = getFacet5AssessmentById(id, true)
     .then(row => {
       if (row) {
-        const { will, energy, control, emotionality, affection } = row;
-        return { will, energy, control, emotionality, affection };
+        const { id, will, energy, control, emotionality, affection } = row;
+        return { id, facets: { will, energy, control, emotionality, affection }};
       } else {
         return null;
       }
