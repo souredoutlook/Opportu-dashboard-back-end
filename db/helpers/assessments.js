@@ -146,16 +146,18 @@ const updateValuesAssessmentById = function(assessment_id) {
 };
 
 /**
- * Get a facet 5 assessment by assessment_id
+ * Get a facet 5 assessment by assessment_id or user_id
  * @param {number} id 
+ * @param {boolean} byUser, defaults to false 
  * @returns {object} returns assessment object
  */
- const getFacet5AssessmentById = function(id) {
+ const getFacet5AssessmentById = function(id, byUser = false) {
+  const condition = byUser ? 'user_id' : 'id';
   const queryParams = [id]
   const queryString = `
     SELECT *
     FROM facet_5_assessments
-    WHERE id = $1;
+    WHERE ${condition} = $1;
   `;
 
   return db.query(queryString, queryParams)
@@ -164,7 +166,7 @@ const updateValuesAssessmentById = function(assessment_id) {
         //constraints should ensure that only one row is returned
         return res.rows[0];
       } else {
-        //return null when no assessments are associated with that id
+        //return null when no assessments are associated with the relevant id
         return null;
       }
      })
