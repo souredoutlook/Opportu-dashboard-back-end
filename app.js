@@ -19,6 +19,7 @@ const usersRouter = require('./routes/users');
 const sessionsRouter = require('./routes/sessions');
 const assessmentsRouter = require('./routes/assessments');
 const groupsRouter = require('./routes/groups');
+const teamsRouter = require('./routes/teams');
 
 const app = express();
 
@@ -39,5 +40,6 @@ app.use('/users', usersRouter(db, bcrypt));
 app.use('/sessions', sessionsRouter(db, bcrypt));
 app.use('/assessments', assessmentsRouter(db, bcrypt));
 app.use('/groups', groupsRouter(db));
+app.use('/teams', teamsRouter(db));
 
 module.exports = app;
