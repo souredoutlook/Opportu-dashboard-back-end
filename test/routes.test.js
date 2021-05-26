@@ -666,5 +666,62 @@ describe('All routes', function() {
     });
 
   });
+
+  describe('Groups Router', function() {
+
+    before(function() {
+      divider();
+    });
+
+    describe.only('POST /groups', function() {
+
+      before(function() {
+        divider();
+      });
+      
+      it('responds 401 if session.userId is undefined', function(done) {
+        request(app)
+        .post('/groups')
+        .expect(401, done);
+      });
+
+      it('responds 403 if session.userId does not have admin privileges', function(done) {
+        userSession.post('/groups')
+        .expect(403, done);
+      });
+
+      it('responds 400 if session.userId is not undefined and user is an admin but no description is provided', function(done) {
+        adminSession.post('/groups')
+        .send({name: "Test"})
+        .expect(400, done);
+      });
+
+      it('responds 400 if session.userId is not undefined and user is an admin but no name is provided', function(done) {
+        adminSession.post('/groups')
+        .send({description: "A very testy organization."})
+        .expect(400, done);
+      });
+
+      it('responds 200 if request is valid and returns the id', function(done) {
+        adminSession.post('/groups')
+        .send({name: "Test", description: "A very testy organization."})
+        .expect(200)
+        .then(response => {
+          const {id} = response.body;
+          assert(id !== undefined);
+          done();
+        })
+        .catch(err=>done(err));
+      });
+
+      it('responds 400 if request is valid and but user email is not unique', function(done) {
+        adminSession.post('/groups')
+        .send({name: "Test", description: "A very testy organization."})
+        .expect(400, done);
+      });
+
+    });
+
+  });
   
 });
