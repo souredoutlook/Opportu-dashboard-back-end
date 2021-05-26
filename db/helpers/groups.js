@@ -4,7 +4,7 @@ const db = require("../pool")
   * Insert a group with valid info into the database if unique
   * @param {string} name
   * @param {string} description
-  * @returns {object} returns a new user object
+  * @returns {object} returns a new group object
   */
  const addGroupIfUnique = function(name, description) {
    const queryParams = [name, description, name];
