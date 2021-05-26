@@ -12,6 +12,8 @@ const {
   getFacet5AssessmentById,
   updateFacet5AssessmentById,
 } = require('./assessments');
+const { addGroupIfUnique } = require('./groups');
+
 const db = require('../pool');
 
 /**
@@ -213,5 +215,7 @@ exports.addFacet5AssessmentById = addFacet5AssessmentById;
 exports.getFacet5AssessmentById = getFacet5AssessmentById;
 exports.updateFacet5AssessmentById = updateFacet5AssessmentById;
 
-// --- test ---
+// --- groups ---
+
+exports.addGroupIfUnique = addGroupIfUnique;
 
