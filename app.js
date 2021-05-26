@@ -18,6 +18,7 @@ const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
 const sessionsRouter = require('./routes/sessions');
 const assessmentsRouter = require('./routes/assessments');
+const groupsRouter = require('./routes/groups');
 
 const app = express();
 
@@ -37,5 +38,6 @@ app.use('/', indexRouter());
 app.use('/users', usersRouter(db, bcrypt));
 app.use('/sessions', sessionsRouter(db, bcrypt));
 app.use('/assessments', assessmentsRouter(db, bcrypt));
+app.use('/groups', groupsRouter(db));
 
 module.exports = app;
