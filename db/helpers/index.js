@@ -12,8 +12,9 @@ const {
   getFacet5AssessmentById,
   updateFacet5AssessmentById,
 } = require('./assessments');
-const { addGroupIfUnique } = require('./groups');
-const { addTeam } = require('./teams');
+const { addGroupIfUnique, getGroups } = require('./groups');
+const { addTeam, getTeams } = require('./teams');
+const { addAssignment } = require('./assignments')
 
 const db = require('../pool');
 
@@ -219,7 +220,12 @@ exports.updateFacet5AssessmentById = updateFacet5AssessmentById;
 // --- groups ---
 
 exports.addGroupIfUnique = addGroupIfUnique;
+exports.getGroups = getGroups;
 
 // --- teams ---
 exports.addTeam = addTeam;
+exports.getTeams = getTeams;
+
+// --- assignments ---
+exports.addAssignment = addAssignment;
 
