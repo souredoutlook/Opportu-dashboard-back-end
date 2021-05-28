@@ -8,11 +8,9 @@ const {
   KEY2,
 } = process.env;
 
-
 const express = require('express');
 const logger = require('morgan');
 const cookieSession = require('cookie-session');
-
 
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
@@ -20,6 +18,7 @@ const sessionsRouter = require('./routes/sessions');
 const assessmentsRouter = require('./routes/assessments');
 const groupsRouter = require('./routes/groups');
 const teamsRouter = require('./routes/teams');
+const assignmentsRouter = require('./routes/assignments');
 
 const app = express();
 
@@ -41,5 +40,6 @@ app.use('/sessions', sessionsRouter(db, bcrypt));
 app.use('/assessments', assessmentsRouter(db, bcrypt));
 app.use('/groups', groupsRouter(db));
 app.use('/teams', teamsRouter(db));
+app.use('/assignments', assignmentsRouter(db));
 
 module.exports = app;
