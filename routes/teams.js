@@ -38,6 +38,30 @@ module.exports = (db) => {
     }
   });
 
+  router.get('/', function(req, res) {
+    const userId = req.session && req.session.userId;
+
+    //check session
+    if (userId) {
+      //check if user is admin
+      db.isAdmin(userId)
+      .then(isAdmin => {
+        if (isAdmin) {
+          db.getTeams()
+          .then((rows)=>{
+            res.send(rows);
+          });
+        } else {
+          //not admin
+          res.sendStatus(403);
+        }
+      });
+    } else {
+      //no session
+      res.sendStatus(401);
+    }
+  });
+
   
   return router;
 
