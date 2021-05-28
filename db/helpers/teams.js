@@ -1,9 +1,10 @@
 const db = require("../pool")
 
  /**
-  * Insert a group with valid info into the database if unique
+  * Insert a team with valid info into the database
   * @param {string} name
   * @param {string} description
+  * @param {number} group_id
   * @returns {object} returns a team object
   */
  const addTeam = function(name, description, group_id) {
@@ -28,4 +29,22 @@ const db = require("../pool")
     })
  }
 
- module.exports = { addTeam };
+ /**
+ * Returns team details for all teams
+ * @returns array of objects representing user details
+ */
+const getTeams = function() {
+  const queryParams = [];
+  const queryString = `
+    SELECT teams.name as team_name, teams.id as team_id, groups.name as group_name, groups.id as group_id
+    FROM teams
+    JOIN groups on group_id = groups.id;
+  `;
+
+  return db.query(queryString, queryParams)
+    .then((res) => {
+      return res.rows;
+    })
+};
+
+ module.exports = { addTeam, getTeams };
