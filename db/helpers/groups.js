@@ -31,4 +31,21 @@ const db = require("../pool")
     })
  }
 
- module.exports = { addGroupIfUnique };
+ /**
+ * Returns group details for all groups
+ * @returns array of objects representing user details
+ */
+const getGroups = function() {
+  const queryParams = [];
+  const queryString = `
+    SELECT groups.name as group_name, groups.id as group_id
+    FROM groups;
+  `;
+
+  return db.query(queryString, queryParams)
+    .then((res) => {
+      return res.rows;
+    })
+};
+
+ module.exports = { addGroupIfUnique, getGroups };
