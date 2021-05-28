@@ -307,6 +307,7 @@ describe('All routes', function() {
         .get('/users')
         .expect(200)
         .then(response => {
+          console.log(response.body)
           assert(response.body instanceof Array);
           assert(response.body.length >= 1);
           done();
@@ -722,6 +723,38 @@ describe('All routes', function() {
 
     });
 
+    describe('GET /groups', function() {
+
+      before(function() {
+        divider();
+      });
+        
+      it('responds 401 if session.userId is undefined', function(done) {
+        request(app)
+        .get('/groups')
+        .expect(401, done);
+      });
+
+      it('responds 403 if session.userId does not have admin privileges', function(done) {
+        userSession.get('/groups')
+        .expect(403, done);
+      });
+      
+      it('responds with 200 and an array with a length of 1 or greater if session.userId has admin privileges', function(done) {
+        adminSession
+        .get('/groups')
+        .expect(200)
+        .then(response => {
+          console.log(response.body);
+          assert(response.body instanceof Array);
+          assert(response.body.length >= 1);
+          done();
+        })
+        .catch(err => done(err));
+      });
+      
+    });
+
   });
 
   describe('Teams Router', function() {
@@ -730,7 +763,7 @@ describe('All routes', function() {
       divider();
     });
 
-    describe('POST /Teams', function() {
+    describe('POST /teams', function() {
 
       before(function() {
         divider();
@@ -786,6 +819,99 @@ describe('All routes', function() {
 
     });
 
+    describe('GET /teams', function() {
+
+      before(function() {
+        divider();
+      });
+        
+      it('responds 401 if session.userId is undefined', function(done) {
+        request(app)
+        .get('/teams')
+        .expect(401, done);
+      });
+
+      it('responds 403 if session.userId does not have admin privileges', function(done) {
+        userSession.get('/teams')
+        .expect(403, done);
+      });
+      
+      it('responds with 200 and an array with a length of 1 or greater if session.userId has admin privileges', function(done) {
+        adminSession
+        .get('/teams')
+        .expect(200)
+        .then(response => {
+          assert(response.body instanceof Array);
+          assert(response.body.length >= 1);
+          done();
+        })
+        .catch(err => done(err));
+      });
+      
+    });
+
   });
   
+  describe('Assignments Router', function() {
+
+    before(function() {
+      divider();
+    });
+
+    describe('POST /assignments', function() {
+
+      before(function() {
+        divider();
+      });
+      
+      it('responds 401 if session.userId is undefined', function(done) {
+        request(app)
+        .post('/assignments')
+        .expect(401, done);
+      });
+
+      it('responds 403 if session.userId does not have admin privileges', function(done) {
+        userSession.post('/assignments')
+        .expect(403, done);
+      });
+
+      it('responds 400 if session.userId is not undefined and user is an admin but no teamId is provided', function(done) {
+        adminSession.post('/assignments')
+        .send({userId: 2})
+        .expect(400, done);
+      });
+
+      it('responds 400 if session.userId is not undefined and user is an admin but userId is provided', function(done) {
+        adminSession.post('/assignments')
+        .send({teamId: 1})
+        .expect(400, done);
+      });
+      
+      it('responds 400 if session.userId is not undefined and user is an admin but the userId is not valid', function(done) {
+        adminSession.post('/assignments')
+        .send({userId: 99, teamId: 1})
+        .expect(400, done);
+      });
+
+      it('responds 400 if session.userId is not undefined and user is an admin but the teamId is not valid', function(done) {
+        adminSession.post('/assignments')
+        .send({userId: 2, teamId: 99})
+        .expect(400, done);
+      });
+
+      it('responds 200 if request is valid and returns the id', function(done) {
+        adminSession.post('/assignments')
+        .send({userId: 2, teamId: 1})
+        .expect(200)
+        .then(response => {
+          const {id} = response.body;
+          assert(id !== undefined);
+          done();
+        })
+        .catch(err=>done(err));
+      });
+
+    });
+
+  });
 });
