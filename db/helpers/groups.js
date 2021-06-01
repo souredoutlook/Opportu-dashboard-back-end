@@ -48,4 +48,21 @@ const getGroups = function() {
     })
 };
 
- module.exports = { addGroupIfUnique, getGroups };
+const getUsersByGroupId = function (id) {
+  const queryParams = [id];
+  const queryString = `
+    SELECT users.id AS user_id 
+    FROM users
+    JOIN assignments ON users.id = user_id
+    JOIN teams ON team_id = teams.id
+    JOIN groups ON group_id = groups.id
+    WHERE group_id = $1;
+  `
+
+  return db.query(queryString, queryParams)
+    .then(res => {
+      return res.rows;
+    });
+}
+
+ module.exports = { addGroupIfUnique, getGroups, getUsersByGroupId };
