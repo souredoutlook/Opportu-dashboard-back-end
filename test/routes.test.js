@@ -307,7 +307,6 @@ describe('All routes', function() {
         .get('/users')
         .expect(200)
         .then(response => {
-          console.log(response.body)
           assert(response.body instanceof Array);
           assert(response.body.length >= 1);
           done();
@@ -745,7 +744,6 @@ describe('All routes', function() {
         .get('/groups')
         .expect(200)
         .then(response => {
-          console.log(response.body);
           assert(response.body instanceof Array);
           assert(response.body.length >= 1);
           done();
@@ -753,6 +751,54 @@ describe('All routes', function() {
         .catch(err => done(err));
       });
       
+    });
+
+    describe('POST /groups/values', function() {
+
+      before(function() {
+        divider();
+      });
+
+      it('responds 401 if session.userId is undefined', function(done) {
+        request(app)
+        .post('/groups/values')
+        .expect(401, done);
+      });
+
+      it('responds 403 if session.userId does not have admin privileges', function(done) {
+        userSession.post('/groups/values')
+        .expect(403, done);
+      });
+
+      it('responds 400 if the user has admin privileges but there is no specified userId', function(done) {
+        adminSession.post('/groups/values')
+        .send({})
+        .expect(400, done);
+      });
+
+      it('responds 400 if the user has admin privileges but the groupId is not valid', function(done) {
+        adminSession.post('/groups/values')
+        .send({groupId: "potato"})
+        .expect(400, done);
+      });
+
+      it('responds 400 if the user has admin privileges but the groupId is not valid', function(done) {
+        adminSession.post('/groups/values')
+        .send({groupId: 0})
+        .expect(400, done);
+      });
+
+      it('responds 200 if the user has admin privileges and the groupId is valid, returns a new group_assessment_id', function(done) {
+        adminSession.post('/groups/values')
+        .send({groupId: 1})
+        .expect(200)
+        .then(response => {
+          const {aggregate_assessment_id} = response.body[0];
+          expect(aggregate_assessment_id !== undefined);
+          done();
+        });
+      });
+
     });
 
   });
@@ -848,6 +894,54 @@ describe('All routes', function() {
         .catch(err => done(err));
       });
       
+    });
+
+    describe('POST /teams/values', function() {
+
+      before(function() {
+        divider();
+      });
+
+      it('responds 401 if session.userId is undefined', function(done) {
+        request(app)
+        .post('/teams/values')
+        .expect(401, done);
+      });
+
+      it('responds 403 if session.userId does not have admin privileges', function(done) {
+        userSession.post('/teams/values')
+        .expect(403, done);
+      });
+
+      it('responds 400 if the user has admin privileges but there is no specified userId', function(done) {
+        adminSession.post('/teams/values')
+        .send({})
+        .expect(400, done);
+      });
+
+      it('responds 400 if the user has admin privileges but the groupId is not valid', function(done) {
+        adminSession.post('/teams/values')
+        .send({teamId: "potato"})
+        .expect(400, done);
+      });
+
+      it('responds 400 if the user has admin privileges but the groupId is not valid', function(done) {
+        adminSession.post('/teams/values')
+        .send({teamId: 0})
+        .expect(400, done);
+      });
+
+      it('responds 200 if the user has admin privileges and the groupId is valid, returns a new group_assessment_id', function(done) {
+        adminSession.post('/teams/values')
+        .send({teamId: 1})
+        .expect(200)
+        .then(response => {
+          const {aggregate_assessment_id} = response.body[0];
+          expect(aggregate_assessment_id !== undefined);
+          done();
+        });
+      });
+
     });
 
   });
