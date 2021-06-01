@@ -12,9 +12,10 @@ const {
   getFacet5AssessmentById,
   updateFacet5AssessmentById,
 } = require('./assessments');
-const { addGroupIfUnique, getGroups } = require('./groups');
-const { addTeam, getTeams } = require('./teams');
+const { addGroupIfUnique, getGroups, getUsersByGroupId } = require('./groups');
+const { addTeam, getTeams, getUsersByTeamId } = require('./teams');
 const { addAssignment } = require('./assignments')
+const { addAggregateAssessmentById } = require('./aggregate_assessments');
 
 const db = require('../pool');
 
@@ -201,10 +202,58 @@ const addRankedValues = function(assessment_id, values) {
           }
         })
     })
-    .catch(err => console.log(err));
+    .catch(err => null);
 
 };
 exports.addRankedValues = addRankedValues;
+
+const assignAggregateCoreValues = function(groupId, teamId) {
+
+  const promises = [];
+
+  promises.push(addAggregateAssessmentById(groupId, teamId));
+
+  if (groupId) {
+    promises.push(getUsersByGroupId(groupId));
+  } else {
+    promises.push(getUsersByTeamId(teamId));
+  }
+
+  return Promise.all(promises)
+  .then(promises => {
+    const { id } = promises[0];
+    const users = promises[1].map(element => element.user_id);
+
+    const queryParams = [id];
+    let queryString = `
+      INSERT INTO values_assessments (user_id, aggregate_assessment_id)
+      VALUES
+    `;
+
+    for (let i = 0; i < users.length; i++) {
+      queryParams.push(users[i]);
+      queryString += `($${queryParams.length}, $1)`
+      if (i < users.length - 1) {
+        queryString += ', '
+      }
+    }
+
+    queryString += ' RETURNING *;'
+
+    return db.query(queryString, queryParams)
+    .then(response => {
+      if (response.rows && response.rows.length > 0) {
+        return response.rows;
+      } else {
+        //insertion has failed
+        return null;
+      }
+    })
+    .catch(err => null);
+  })
+  .catch(err => null);
+};
+exports.assignAggregateCoreValues = assignAggregateCoreValues;
 
 // --- users ---
 exports.getUsers = getUsers;
