@@ -1,0 +1,8 @@
+DROP TABLE IF EXISTS aggregate_assessments CASCADE;
+
+CREATE TABLE aggregate_assessments (
+  id SERIAL PRIMARY KEY,
+  created TIMESTAMP NOT NULL DEFAULT NOW()::TIMESTAMP,
+  group_id INTEGER REFERENCES groups(id) ON DELETE CASCADE,
+  team_id INTEGER REFERENCES teams(id) ON DELETE CASCADE
+);
