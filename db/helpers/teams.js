@@ -47,4 +47,20 @@ const getTeams = function() {
     })
 };
 
- module.exports = { addTeam, getTeams };
+const getUsersByTeamId = function(id) {
+  const queryParams = [id];
+  const queryString = `
+    SELECT users.id AS user_id 
+    FROM users
+    JOIN assignments ON users.id = user_id
+    JOIN teams ON team_id = teams.id
+    WHERE teams.id = $1;
+  `
+
+  return db.query(queryString, queryParams)
+    .then(res => {
+      return res.rows;
+    });
+}
+
+ module.exports = { addTeam, getTeams, getUsersByTeamId };
