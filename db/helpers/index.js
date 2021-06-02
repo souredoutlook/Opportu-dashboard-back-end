@@ -15,7 +15,7 @@ const {
 const { addGroupIfUnique, getGroups, getUsersByGroupId } = require('./groups');
 const { addTeam, getTeams, getUsersByTeamId } = require('./teams');
 const { addAssignment } = require('./assignments')
-const { addAggregateAssessmentById } = require('./aggregate_assessments');
+const { addAggregateAssessmentById, getAggregateAssessmentResultsById } = require('./aggregate_assessments');
 
 const db = require('../pool');
 
@@ -277,4 +277,7 @@ exports.getTeams = getTeams;
 
 // --- assignments ---
 exports.addAssignment = addAssignment;
+
+//aggregate_assessments
+exports.getAggregateAssessmentResultsById = getAggregateAssessmentResultsById;
 
