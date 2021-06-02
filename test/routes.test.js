@@ -1008,4 +1008,68 @@ describe('All routes', function() {
     });
 
   });
+
+  //aggregate assessments must be run last due to setup in earlier tests
+  describe('GET /assessments/', function() {
+    before(function() {
+      divider();
+    });
+
+    it('responds 401 if session.userId is undefined', function(done) {
+      request(app)
+      .get('/assessments/aggregate/1')
+      .expect(401, done);
+    });
+
+    it('responds 403 if session.userId does not have admin privileges', function(done) {
+      userSession.get('/assessments/aggregate/1')
+      .expect(403, done);
+    });
+    
+    it('responds 404 if assessment_id is invalid', function(done) {
+      adminSession.get('/assessments/aggregate/potato')
+      .expect(404, done);
+    });
+
+    it('responds 404 if assessment_id is valid but does not exist', function(done) {
+      adminSession.get('/assessments/aggregate/99')
+      .expect(404, done);
+    });
+
+    it('responds 404 if admin and aggregate assessment exists but no associated values_assessments have been completed', function(done) {
+      adminSession.get('/assessments/aggregate/1')
+      .expect(404, done);
+    });
+
+    it('responds 200 if admin and aggregate assessment exists but no associated values_assessments have been completed', function(done) {
+      //insert new data into a values assessment that references an aggregate_assessment_id
+      userSession.put('/assessments/values/4')
+      .send({
+        values: [
+          { value: 'Ambition', is_custom: false },
+          { value: 'Authority', is_custom: false },
+          { value: 'Autonomy', is_custom: false },
+          { value: 'Beauty', is_custom: false },
+          { value: 'Belonging', is_custom: false },
+          { value: 'Boldness', is_custom: false },
+          { value: 'Buoyancy', is_custom: false },
+          { value: 'Calm', is_custom: false },
+          { value: 'Celebrity/Fame', is_custom: false },
+          { value: 'Raditude', is_custom: true },
+        ]
+      })
+      .expect(200)
+      .then(response => {
+        adminSession.get('/assessments/aggregate/1')
+          .expect(200)
+          .then(response => {
+            const { body } = response;
+            expect(body instanceof Object);
+            done();
+          })
+        });
+    });
+
+  });
+
 });

@@ -200,5 +200,41 @@ module.exports = (db) => {
     }
   });
 
+  router.get('/aggregate/:assessment_id', function(req, res) {
+    const userId = req.session && req.session.userId;
+    const {assessment_id} = req.params;
+
+    //check session
+    if (userId) {
+      //check if user is admin
+      db.isAdmin(userId)
+      .then(isAdmin => {
+        if (isAdmin) {
+         // if they are admin
+         if (assessment_id) {
+           db.getAggregateAssessmentResultsById(assessment_id)
+           .then(results => {
+             if (results) {
+               res.send(results).status(200);
+             } else {
+               //invalid or non-existent assessment_id
+               res.sendStatus(404);
+             }
+           })
+         } else {
+           // no id provided
+           res.sendStatus(400);
+         }
+        } else {
+          //not admin
+          res.sendStatus(403);
+        }
+      });
+    } else {
+      //no session
+      res.sendStatus(401);
+    }
+  });
+
   return router;
 };
