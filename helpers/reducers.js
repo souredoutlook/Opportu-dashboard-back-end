@@ -16,4 +16,18 @@ const core_values_reducer = function(rows) {
   },{});
 };
 
-module.exports = { core_values_reducer };
+const aggregate_assessment_reducer = function(rows) {
+  return rows.reduce((prev, cur) => {
+    const { core_value, custom_value } = cur;
+
+    if (prev[core_value || custom_value] === undefined) {
+      prev[core_value || custom_value] = 1;
+    } else {
+      prev[core_value || custom_value] += 1;
+    }
+
+    return prev;
+  }, {});
+};
+
+module.exports = { core_values_reducer, aggregate_assessment_reducer };
