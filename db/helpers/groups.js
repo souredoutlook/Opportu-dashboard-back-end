@@ -51,7 +51,7 @@ const getGroups = function() {
 const getUsersByGroupId = function (id) {
   const queryParams = [id];
   const queryString = `
-    SELECT users.id AS user_id 
+    SELECT users.id AS user_id, email, first_name, last_name, teams.name as team_name, groups.name as group_name
     FROM users
     JOIN assignments ON users.id = user_id
     JOIN teams ON team_id = teams.id
