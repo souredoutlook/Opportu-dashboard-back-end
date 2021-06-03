@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-module.exports = (db) => {
+module.exports = (db, transporter) => {
 
   router.post('/values', function(req, res) {
     const userId = req.session && req.session.userId;
@@ -16,7 +16,7 @@ module.exports = (db) => {
          // if they are admin
          if (id) {
           //assign an assignment to each user associated with the teamId   
-          db.assignAggregateCoreValues(null, id)
+          db.assignAggregateCoreValues(null, id, adminEmail, transporter)
           .then(response => {
             if (response) {
               res.send(response).status(200);

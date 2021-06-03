@@ -49,8 +49,8 @@ app.use('/', indexRouter());
 app.use('/users', usersRouter(db, bcrypt, transporter));
 app.use('/sessions', sessionsRouter(db, bcrypt));
 app.use('/assessments', assessmentsRouter(db, transporter));
-app.use('/groups', groupsRouter(db));
-app.use('/teams', teamsRouter(db));
+app.use('/groups', groupsRouter(db, transporter));
+app.use('/teams', teamsRouter(db, transporter));
 app.use('/assignments', assignmentsRouter(db));
 
 module.exports = app;
