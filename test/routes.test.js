@@ -37,7 +37,7 @@ describe('All routes', function() {
   //setup authenticated admin session
   before(function(done) {
     adminSession.post('/sessions')
-    .send({"email": "nicholas@opportu.com", "password": "password"})
+    .send({"email": "nicholas.meisenheimer@opportu.com", "password": "password"})
     .expect(200)
     .end(function (err) {
       if (err) return done(err);
