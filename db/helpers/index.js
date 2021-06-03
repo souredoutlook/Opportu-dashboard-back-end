@@ -222,7 +222,7 @@ const assignAggregateCoreValues = function(groupId, teamId) {
   return Promise.all(promises)
   .then(promises => {
     const { id } = promises[0];
-    const users = promises[1].map(element => element.user_id);
+    const users = [...promises[1]];
 
     const queryParams = [id];
     let queryString = `
@@ -231,7 +231,7 @@ const assignAggregateCoreValues = function(groupId, teamId) {
     `;
 
     for (let i = 0; i < users.length; i++) {
-      queryParams.push(users[i]);
+      queryParams.push(users[i].user_id);
       queryString += `($${queryParams.length}, $1)`
       if (i < users.length - 1) {
         queryString += ', '
@@ -242,8 +242,9 @@ const assignAggregateCoreValues = function(groupId, teamId) {
 
     return db.query(queryString, queryParams)
     .then(response => {
-      if (response.rows && response.rows.length > 0) {
-        return response.rows;
+      const { rows } = response;
+      if (rows && rows.length > 0) {
+        return {rows, users};
       } else {
         //insertion has failed
         return null;
