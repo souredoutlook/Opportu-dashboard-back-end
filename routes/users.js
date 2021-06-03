@@ -1,8 +1,14 @@
+require('dotenv').config();
+const {
+  MAILER_USER,
+  MAILER_NOTICE,
+} = process.env;
+
 const express = require('express');
 const router = express.Router();
 const { validateEmail, validatePassword } = require('../helpers/validations');
 
-module.exports = (db, bcrypt) => {
+module.exports = (db, bcrypt, transporter) => {
 
   router.post('/', function(req, res) {
     const userId = req.session && req.session.userId;
@@ -11,13 +17,44 @@ module.exports = (db, bcrypt) => {
     if (userId) {
       //check if user is admin
       db.isAdmin(userId)
-      .then(isAdmin => {
-        if (isAdmin) {
+      .then(adminEmail => {
+        if (adminEmail) {
           if (email && validateEmail(email) && password && validatePassword(password) && first_name && last_name) {
             db.addUserIfUnique(first_name, last_name, email, password, bcrypt)
             .then(newUser => {
               if (newUser) {
                 res.send(newUser).status(200);
+
+                const mailOptions = {
+                  from: MAILER_USER,
+                  to:  adminEmail,
+                  subject: `Successfully added user ${first_name} ${last_name}`,
+                  text: `User details: \nName - ${first_name} ${last_name} \nEmail - ${email} \nPassword - ${password}`
+                };
+
+                transporter.sendMail(mailOptions, function(error, info) {
+                  if (error) {
+                    console.log(error);
+                    const mailOptions = {
+                      from: MAILER_USER,
+                      to: MAILER_NOTICE,
+                      subject: `Failed to send new user details for ${first_name} ${last_name}`,
+                      text: `Unable to deliver user details for ${first_name} ${last_name} please try again.`
+                    };
+
+                    transporter.sendMail(mailOptions, function(error, info) {
+                      if (error) {
+                        console.log('Failed to send failure notice: ', error);
+                      } else {
+                        console.log(console.log('Email sent: ' + info.response));
+                      }
+                    });
+
+                  } else {
+                    console.log('Email sent: ' + info.response);
+                  }
+                });
+
               } else {
                 //email is valid but not unique
                 res.sendStatus(400);
