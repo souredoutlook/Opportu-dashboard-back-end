@@ -25,7 +25,7 @@ module.exports = function aggregateAssessmentMailer (transporter, rows, users, a
   rows.forEach(element => {
     const {first_name, last_name, email} = userHash[element.user_id.toString()]
     text += divider
-    text += `\nAssessment Details: \nName - ${first_name} ${last_name} \nUser Email - ${email} \nAssessment Link - ${FRONT_END_PATH}/assessments/${aggregate_assessment_id}`
+    text += `\nAssessment Details: \nName - ${first_name} ${last_name} \nUser Email - ${email} \nAssessment Link - ${FRONT_END_PATH}/assessments/${element.id}`
   });
 
   const mailOptions = {
@@ -54,7 +54,7 @@ module.exports = function aggregateAssessmentMailer (transporter, rows, users, a
       });
 
     } else {
-      console.log(console.log('Email sent: ' + info.response));
+      console.log('Email sent: ' + info.response);
     }
   });
 
