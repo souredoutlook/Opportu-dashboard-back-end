@@ -42,12 +42,12 @@ const isAdmin = function(id) {
     .then(res => {
       if(res) {
         if (res.is_admin === true) {
-          return true
+          return res.email;
         } else {
-          return false
+          return null;
         }
       } else {
-        return null
+        return null;
       }
     });
 };
@@ -257,6 +257,7 @@ exports.assignAggregateCoreValues = assignAggregateCoreValues;
 
 // --- users ---
 exports.getUsers = getUsers;
+exports.getUserById = getUserById;
 
 // assessments
 exports.addCoreValuesAssessmentById = addCoreValuesAssessmentById;
