@@ -1,12 +1,23 @@
-const db = require("./db/helpers/index");
-const bcrypt = require('bcrypt');
-
 require('dotenv').config();
 
 const {
   KEY1,
   KEY2,
+  MAILER_USER,
+  MAILER_PASS,
 } = process.env;
+
+const db = require("./db/helpers/index");
+const bcrypt = require('bcrypt');
+
+const nodemailer = require('nodemailer');
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: MAILER_USER,
+    pass: MAILER_PASS
+  }
+});
 
 const express = require('express');
 const logger = require('morgan');
@@ -35,9 +46,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 app.use('/', indexRouter());
-app.use('/users', usersRouter(db, bcrypt));
+app.use('/users', usersRouter(db, bcrypt, transporter));
 app.use('/sessions', sessionsRouter(db, bcrypt));
-app.use('/assessments', assessmentsRouter(db, bcrypt));
+app.use('/assessments', assessmentsRouter(db, transporter));
 app.use('/groups', groupsRouter(db));
 app.use('/teams', teamsRouter(db));
 app.use('/assignments', assignmentsRouter(db));
