@@ -1,8 +1,14 @@
+require('dotenv').config();
+const {
+  MAILER_USER,
+  FRONT_END_PATH,
+} = process.env;
+
 const express = require('express');
 const router = express.Router();
 const { validateRankedValues, validateFacets } = require('../helpers/validations');
 
-module.exports = (db) => {
+module.exports = (db, transporter) => {
 
   router.post('/values', function(req, res) {
     const userId = req.session && req.session.userId;
@@ -12,14 +18,55 @@ module.exports = (db) => {
     if (userId) {
       //check if user is admin
       db.isAdmin(userId)
-      .then(isAdmin => {
-        if (isAdmin) {
+      .then(adminEmail => {
+        if (adminEmail) {
          // if they are admin
          if (id) {
            db.addCoreValuesAssessmentById(id)
-            .then(core_values_assessment_id => {
-              if (core_values_assessment_id) {
-                res.send(core_values_assessment_id).status(200);
+            .then(core_values_assessment => {
+              if (core_values_assessment) {
+                db.getUserById(id)
+                .then(user => {
+                  if (user) {
+                    res.send(core_values_assessment).status(200);
+                    
+                    const {first_name, last_name, email} = user;
+                    const assessment_id = core_values_assessment.id;
+                    
+                    const mailOptions = {
+                      from: MAILER_USER,
+                      to:  MAILER_USER,
+                      subject: `Root Values Assessment for ${first_name} ${last_name}`,
+                      text:`Assessment Details: \nName - ${first_name} ${last_name} \nUser Email - ${email} \nAssessment Link - ${FRONT_END_PATH}/assessments/${assessment_id}`
+                    };
+                    
+                    transporter.sendMail(mailOptions, function(error, info){
+                      if (error) {
+                        console.log(error);
+                        const mailOptions = {
+                          from: MAILER_USER,
+                          to: MAILER_NOTICE,
+                          subject: `Failed to send new user details for ${first_name} ${last_name}`,
+                          text: `Unable to deliver user details for ${first_name} ${last_name} please try again.`
+                        };
+    
+                        transporter.sendMail(mailOptions, function(error, info) {
+                          if (error) {
+                            console.log('Failed to send failure notice: ', error);
+                          } else {
+                            console.log(console.log('Email sent: ' + info.response));
+                          }
+                        });
+    
+                      } else {
+                        console.log('Email sent: ' + info.response);
+                      }
+                    });
+
+                  } else {
+                    res.sendStatus(400);
+                  }
+                });
               } else {
                 //no user at the provided id
                 res.sendStatus(400);
