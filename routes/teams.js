@@ -11,8 +11,8 @@ module.exports = (db) => {
     if (userId) {
       //check if user is admin
       db.isAdmin(userId)
-      .then(isAdmin => {
-        if (isAdmin) {
+      .then(adminEmail => {
+        if (adminEmail) {
          // if they are admin
          if (id) {
           //assign an assignment to each user associated with the teamId   
