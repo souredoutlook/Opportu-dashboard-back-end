@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const mailer = require('../mailers/aggregateAssessment');
 
 module.exports = (db, transporter) => {
 
@@ -16,10 +17,12 @@ module.exports = (db, transporter) => {
          // if they are admin
          if (id) {
           //assign an assignment to each user associated with the teamId   
-          db.assignAggregateCoreValues(null, id, adminEmail, transporter)
+          db.assignAggregateCoreValues(null, id)
           .then(response => {
-            if (response) {
-              res.send(response).status(200);
+            const { rows, users } = response;
+            if (rows) {
+              res.send(rows).status(200);
+              mailer(transporter, rows, users, adminEmail);
             } else {
               res.sendStatus(400);
             }
