@@ -104,7 +104,13 @@ const getAssessmentsByUserId = function(id) {
   const core_values = getCoreValuesAssessmentsById(id)
     .then(rows => {
       if (rows) {
-        return core_values_reducer(rows);
+        const response = core_values_reducer(rows);
+
+        if (Object.keys(response).length > 0) {
+          return response;
+        } else {
+          return null;
+        }
       } else {
         return null;
       }
@@ -143,7 +149,7 @@ const getAssessmentsByUserId = function(id) {
       if (promises[1]) {
         assessments.facets = promises[1];
       }
-
+      
       return assessments;
     })
 }
